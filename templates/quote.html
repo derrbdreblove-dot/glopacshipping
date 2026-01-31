@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glopac Shipping Express | Get a Quote</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#ffffff;
+      --muted:#5a667a;
+      --line:#e6eaf0;
+      --good:#1f8f4e;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:#0b1220;}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .topbar{
+      background:var(--brand2);
+      color:#fff;
+      padding:10px 18px;
+      font-size:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .topbar .links a{color:#fff;opacity:.95;margin-left:14px;font-weight:800}
+    .topbar .links a:hover{opacity:1}
+
+    header{background:var(--card);border-bottom:1px solid var(--line);}
+    .header-inner{
+      max-width:1100px;margin:0 auto;padding:14px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;}
+    .brand img{height:44px;width:auto;display:block;}
+    .brand .name{font-weight:900;color:var(--brand);letter-spacing:.2px;font-size:18px;line-height:1.1;}
+    .brand .tag{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;}
+    nav a{margin-left:18px;font-weight:700;color:#0b1220}
+    nav a:hover{color:var(--brand)}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 18px 60px;}
+    .grid{display:grid;grid-template-columns:1fr .9fr;gap:16px;align-items:start;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 8px 24px rgba(11,18,32,.06);
+    }
+    h1{margin:0 0 8px;color:var(--brand);}
+    .muted{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 12px;}
+    label{display:block;font-weight:800;margin:10px 0 6px;font-size:13px;color:#1b2a44;}
+    input, select, textarea{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      outline:none;
+      font-size:14px;
+      background:#fff;
+      font-family:Arial, sans-serif;
+    }
+    input:focus, textarea:focus, select:focus{border-color:var(--brand);}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .btn{
+      width:100%;
+      padding:14px;
+      border:0;
+      border-radius:12px;
+      background:var(--good);
+      color:#fff;
+      font-weight:900;
+      font-size:15px;
+      cursor:pointer;
+      margin-top:10px;
+    }
+    .btn:hover{filter:brightness(.95)}
+    .result{
+      margin-top:14px;
+      border:1px solid #cfead9;
+      background:#eaf7ef;
+      color:#1f8f4e;
+      padding:12px;
+      border-radius:12px;
+      font-weight:800;
+      line-height:1.4;
+    }
+    .note{
+      background:#eef3fb;
+      border:1px solid #d7e3f7;
+      color:var(--brand);
+      padding:12px;
+      border-radius:12px;
+      font-size:13px;
+      line-height:1.4;
+      margin-top:12px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr;}
+      .row{grid-template-columns:1fr;}
+      nav{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>Glopac Shipping Express • Instant Estimate</div>
+    <div class="links">
+      <a href="/policies">Policies</a>
+      <a href="/support">Support</a>
+      <a href="/">Track</a>
+      {% if user %}
+        <a href="/my_shipments">My Shipments</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <!-- keep your existing logo file path unless you renamed it -->
+        <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+        <div>
+          <div class="name">Glopac Shipping Express</div>
+          <div class="tag">Get a shipping quote</div>
+        </div>
+      </div>
+      <nav>
+        <a href="/">Track</a>
+        <a href="/ship">Ship</a>
+        <a href="/services">Services</a>
+        <a href="/locations">Locations</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+
+      <div class="card">
+        <h1>Get a Quote</h1>
+        <p class="muted">
+          This is a simple on-page quote estimator (no backend required). Enter details to get a quick range.
+        </p>
+
+        <form id="quoteForm" onsubmit="return false;">
+          <div class="row">
+            <div>
+              <label>From (City/Country)</label>
+              <input id="from" placeholder="e.g. Accra, Ghana" required>
+            </div>
+            <div>
+              <label>To (City/Country)</label>
+              <input id="to" placeholder="e.g. London, UK" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Shipment Type</label>
+              <select id="type" required>
+                <option value="">Select…</option>
+                <option value="documents">Documents</option>
+                <option value="parcel">Parcel</option>
+                <option value="freight">Freight / Cargo</option>
+              </select>
+            </div>
+            <div>
+              <label>Service Speed</label>
+              <select id="speed" required>
+                <option value="">Select…</option>
+                <option value="express">Express</option>
+                <option value="standard">Standard</option>
+                <option value="economy">Economy</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Weight (kg)</label>
+              <input id="weight" type="number" step="0.01" placeholder="e.g. 2.50" required>
+            </div>
+            <div>
+              <label>Declared Value (USD)</label>
+              <input id="value" type="number" step="0.01" placeholder="e.g. 150.00">
+            </div>
+          </div>
+
+          <label>Notes (optional)</label>
+          <input id="notes" placeholder="Fragile, electronics, time sensitive…">
+
+          <button class="btn" type="button" onclick="calcQuote()">Calculate Quote</button>
+
+          <div id="result" class="result" style="display:none;"></div>
+
+          <div class="note">
+            This is an estimate. Final price depends on dimensions, destination rules, customs, and pickup requirements.
+            For pickup scheduling, go to <a href="/ship"><b>Ship</b></a>.
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 10px;color:var(--brand);">Pricing guide</h2>
+        <p class="muted">
+          • Express is fastest (higher cost)<br>
+          • Economy is lowest cost (slower)<br>
+          • Freight uses volume/weight and route complexity
+        </p>
+        <div class="note">
+          Want to track an existing package? Go back to <a href="/"><b>Track</b></a>.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function fmtMoney(n){
+      try{
+        return new Intl.NumberFormat(undefined, { style:'currency', currency:'USD' }).format(n);
+      }catch(e){
+        return '$' + (Math.round(n*100)/100).toFixed(2);
+      }
+    }
+
+    function calcQuote(){
+      const from = document.getElementById('from').value.trim();
+      const to = document.getElementById('to').value.trim();
+      const type = document.getElementById('type').value;
+      const speed = document.getElementById('speed').value;
+      const weight = parseFloat(document.getElementById('weight').value || '0');
+
+      if(!from || !to || !type || !speed || !(weight > 0)){
+        alert('Please fill From, To, Type, Speed, and Weight.');
+        return;
+      }
+
+      // Simple estimator logic (client-side only)
+      let base = 15; // starting fee
+      let perKg = 6;
+
+      if(type === 'documents'){ base = 12; perKg = 3; }
+      if(type === 'parcel'){ base = 18; perKg = 7; }
+      if(type === 'freight'){ base = 45; perKg = 12; }
+
+      let speedMult = 1.0;
+      if(speed === 'express') speedMult = 1.7;
+      if(speed === 'standard') speedMult = 1.2;
+      if(speed === 'economy') speedMult = 1.0;
+
+      const est = (base + (perKg * weight)) * speedMult;
+
+      // show a range
+      const low = est * 0.9;
+      const high = est * 1.15;
+
+      const res = document.getElementById('result');
+      res.style.display = 'block';
+      res.innerHTML =
+        'Estimated total: <b>' + fmtMoney(low) + ' – ' + fmtMoney(high) + '</b><br>' +
+        '<span style="font-weight:700;">Route:</span> ' + from + ' → ' + to + '<br>' +
+        '<span style="font-weight:700;">Service:</span> ' + speed.toUpperCase() + ' • ' + type.toUpperCase() + ' • ' + weight + 'kg';
+    }
+  </script>
+
+</body>
+</html>

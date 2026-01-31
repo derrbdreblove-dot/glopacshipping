@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glopac Shipping Express | Track, Ship & Manage Deliveries</title>
+  <style>
+    :root{
+      --ink:#0b1220;
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#ffffff;
+      --muted:#5a667a;
+      --line:#e6eaf0;
+      --good:#1f8f4e;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:var(--ink);}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .topbar{
+      background:var(--brand2);
+      color:#fff;
+      padding:10px 18px;
+      font-size:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .topbar .links a{
+      color:#fff;opacity:.95;margin-left:14px;
+      font-weight:800;
+    }
+    .topbar .links a:hover{opacity:1}
+
+    header{background:var(--card);border-bottom:1px solid var(--line);}
+    .header-inner{
+      max-width:1200px;margin:0 auto;padding:14px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+    }
+    .brand img{height:44px;width:auto;display:block;}
+    .brand .name{
+      font-weight:900;color:var(--brand);letter-spacing:.2px;font-size:18px;
+      line-height:1.1;
+    }
+    .brand .tag{
+      font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;
+    }
+    nav a{margin-left:18px;font-weight:700;color:var(--ink)}
+    nav a:hover{color:var(--brand)}
+
+    /* HERO (video background) */
+    .hero{
+      position:relative;
+      overflow:hidden;
+      color:#fff;
+      /* fallback if video doesn't load */
+      background:linear-gradient(135deg, rgba(0,51,102,.95), rgba(0,34,68,.95));
+      isolation:isolate;
+    }
+    .hero video.hero-bg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:-2;
+      filter:saturate(1.05) contrast(1.05);
+    }
+    /* Dark overlay to keep text readable */
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background:linear-gradient(135deg, rgba(0,34,68,.86), rgba(0,51,102,.82));
+    }
+
+    .hero-inner{
+      max-width:1200px;margin:0 auto;padding:46px 18px;
+      display:grid;grid-template-columns:1.2fr .8fr;gap:22px;align-items:center;
+    }
+    .hero h1{margin:0 0 10px;font-size:40px;line-height:1.1}
+    .hero p{margin:0 0 18px;color:rgba(255,255,255,.92);font-size:16px;max-width:56ch}
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:14px;
+      padding:18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .track{background:#fff;border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.18);}
+    .track label{display:block;font-size:13px;margin-bottom:8px;color:var(--muted);font-weight:700}
+    .track-row{display:flex;gap:10px}
+    .track input{
+      flex:1;padding:14px;border-radius:10px;border:1px solid var(--line);
+      font-size:16px;outline:none;
+    }
+    .btn{
+      padding:14px 16px;border:0;border-radius:10px;background:var(--good);
+      color:#fff;font-weight:800;cursor:pointer;font-size:15px;
+    }
+    .err{margin-top:10px;color:#ffd7d7;background:rgba(180,30,30,.2);padding:10px;border-radius:10px}
+
+    .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;}
+    .qa{
+      background:#fff;border-radius:12px;border:1px solid var(--line);
+      padding:12px;text-align:left;color:var(--ink);
+      transition:transform .08s ease, box-shadow .08s ease;
+    }
+    .qa:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(11,18,32,.08);
+      text-decoration:none;
+    }
+    .qa .t{font-weight:800;margin-bottom:4px}
+    .qa .s{font-size:13px;color:var(--muted);line-height:1.3}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
+    .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 8px 24px rgba(11,18,32,.06);
+    }
+    .card .img{height:160px;background:#dfe8f5;background-size:cover;background-position:center;}
+    .card .pad{padding:16px}
+    .muted{color:var(--muted);font-size:14px;line-height:1.5}
+
+    /* FIX: your right-side text looked "white"/highlighted in screenshot.
+       Force safe readable colors inside those cards. */
+    .card .pad h3{color:#0b1220;}
+    .card .pad p{color:var(--muted);}
+    .card .pad a{color:var(--brand);font-weight:800;}
+    .card .pad ::selection{
+      background:rgba(0,51,102,.18);
+      color:#0b1220;
+    }
+
+    footer{
+      background:#0b1220;color:#cbd5e1;
+      padding:28px 18px;border-top:1px solid rgba(255,255,255,.06);
+    }
+    .copy{max-width:1200px;margin:0 auto;color:#93a4bb;font-size:13px}
+
+    @media (max-width: 980px){
+      .hero-inner{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .quick-actions{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>Glopac Shipping Express • International shipping • Customs support</div>
+    <div class="links">
+      <a href="/policies">Policies</a>
+      <a href="/support">Support</a>
+
+      {% if user %}
+        <a href="/my_shipments">My Shipments</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <img src="/static/img/blueoakexpress-logo.jpg" alt="Blueoakexpress Logo">
+        <div>
+          <div class="name">Glopac Shipping Express</div>
+          <div class="tag">Track • Ship • Deliver</div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="/">Track</a>
+        <a href="/services">Services</a>
+        <a href="/quote">Get a Quote</a>
+        <a href="/locations">Locations</a>
+        <a href="/support">Help</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <!-- Video background ONLY (behind content) -->
+    <video class="hero-bg" autoplay muted loop playsinline preload="metadata">
+      <source src="/static/videos/hero.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-inner">
+      <div>
+        <h1>Track shipments worldwide — fast, clear, and secure.</h1>
+        <p>
+          Enter your tracking number to see route updates, shipment history,
+          and any required customs or tax actions.
+        </p>
+
+        <div class="hero-card">
+          <div class="track">
+            <form action="/track" method="post">
+              <label for="tracking_id">Tracking number</label>
+              <div class="track-row">
+                <input id="tracking_id" name="tracking_id" placeholder="e.g., ABC123XYZ" required />
+                <button class="btn" type="submit">Track</button>
+              </div>
+              {% if error %}
+                <div class="err">{{ error }}</div>
+              {% endif %}
+            </form>
+
+            <div class="quick-actions">
+              <a class="qa" href="/ship">
+                <div class="t">Ship</div>
+                <div class="s">Create a shipment request and schedule pickup.</div>
+              </a>
+              <a class="qa" href="/quote">
+                <div class="t">Get a Quote</div>
+                <div class="s">Estimate price by route, weight, and speed.</div>
+              </a>
+              <a class="qa" href="/locations">
+                <div class="t">Locations</div>
+                <div class="s">Find drop-off points and partner depots.</div>
+              </a>
+
+              {% if user %}
+                <a class="qa" href="/my_shipments">
+                  <div class="t">My Shipments</div>
+                  <div class="s">View shipments assigned to your account.</div>
+                </a>
+              {% else %}
+                <a class="qa" href="/support">
+                  <div class="t">Support</div>
+                  <div class="s">Claims, delivery changes, and tracking help.</div>
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="img" style="background-image:url('/static/img/hero-1.jpg');"></div>
+          <div class="pad">
+            <h3>International shipping made simple</h3>
+            <p class="muted">Clear customs steps, duty/tax notices, and consistent tracking across the journey.</p>
+            <p class="muted"><a href="/services">Explore services →</a></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="pad">
+            <h3 style="margin-bottom:6px;">Delivery options</h3>
+            <p class="muted">Request a hold, update delivery instructions, or contact support for exceptions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="grid">
+      <div class="card">
+        <div class="img" style="background-image:url('/static/img/service-express.jpg');"></div>
+        <div class="pad">
+          <h3>Express delivery</h3>
+          <p class="muted">Priority routing with proactive exception alerts and faster clearance workflows.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img" style="background-image:url('/static/img/service-economy.jpg');"></div>
+        <div class="pad">
+          <h3>Economy shipping</h3>
+          <p class="muted">Affordable international delivery with trackable milestones and predictable handoffs.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img" style="background-image:url('/static/img/service-freight.jpg');"></div>
+        <div class="pad">
+          <h3>Freight & cargo</h3>
+          <p class="muted">Bulk consignments, palletized freight, and coordinated cargo options.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="copy">© <span id="y"></span> Glopac Shipping Express. All rights reserved.</div>
+  </footer>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+  {% if chat_unread_count and chat_latest_tracking_id %}
+  <a href="/payment_chat/{{ chat_latest_tracking_id }}" style="
+    position:fixed; right:16px; bottom:16px; z-index:9999;
+    background:#003366; color:white; text-decoration:none;
+    padding:12px 14px; border-radius:999px; font-weight:900;
+    box-shadow:0 10px 24px rgba(11,18,32,.18);
+    ">
+    New message ({{ chat_unread_count }}) • Tap to open chat
+  </a>
+{% endif %}
+
+</body>
+</html>

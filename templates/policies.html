@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glopac Shipping Express | Policies</title>
+  <style>
+    :root{--brand:#003366;--brand2:#002244;--bg:#f4f7fa;--card:#fff;--line:#e6eaf0;--muted:#5a667a;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#0b1220;}
+    a{color:var(--brand);text-decoration:none;font-weight:800}
+    a:hover{text-decoration:underline}
+    header{background:var(--card);border-bottom:1px solid var(--line);}
+    .header{max-width:1100px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:44px}
+    .brand .name{font-weight:900;color:var(--brand)}
+    .brand .tag{font-size:12px;color:var(--muted);font-weight:700}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(11,18,32,.06);margin-bottom:14px}
+    h1{margin:0 0 8px;color:var(--brand)}
+    h2{margin:0 0 10px;color:var(--brand);font-size:18px}
+    .muted{color:var(--muted);line-height:1.55}
+    ul{margin:8px 0 0 18px;color:#22304a}
+    .note{background:#fff3cd;border:1px solid #ffe69c;border-radius:12px;padding:12px;margin-top:10px;color:#7a5200}
+    footer{padding:18px;color:var(--muted);text-align:center}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header">
+    <div class="brand">
+      <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express">
+      <div>
+        <div class="name">Glopac Shipping Express</div>
+        <div class="tag">Policies</div>
+      </div>
+    </div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/support" style="margin-left:14px;">Support</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Policies</h1>
+    <p class="muted">
+      These policies explain how Glopac Shipping Express handles shipping, delivery, customs holds, and payments.
+      You can adjust wording anytime.
+    </p>
+    <div class="note">
+      <b>Important:</b> If a shipment is held for duties/taxes, only the account owner can view the fee amount and submit payment.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1) Tracking & Status Updates</h2>
+    <p class="muted">
+      Tracking events are provided as shipment scans occur. Times may vary based on local hubs, customs,
+      and partner carriers.
+    </p>
+    <ul>
+      <li>“Label Created” means shipping info was created but the parcel may not yet be received.</li>
+      <li>“In Transit” means the parcel is moving through hubs.</li>
+      <li>“On Hold” may occur during customs review, missing documents, or payment requirements.</li>
+      <li>“Delivered” means shipment reached destination facility and was completed.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>2) Customs, Duties & Taxes</h2>
+    <p class="muted">
+      Some shipments require duties or taxes before release. This depends on destination rules and declared value.
+      When fees are required, the shipment status will show “On Hold”.
+    </p>
+    <ul>
+      <li>Fees are shown only to the shipment owner account.</li>
+      <li>After payment submission, status may show “Pending Verification”.</li>
+      <li>Once verified by admin, the shipment is released and returns to “In Transit”.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>3) Prohibited & Restricted Items</h2>
+    <p class="muted">
+      Customers must comply with local and international shipping laws. Some items are prohibited or restricted.
+    </p>
+    <ul>
+      <li>Hazardous materials, illegal substances, and prohibited weapons are not accepted.</li>
+      <li>Perishable items may require special packaging/approval.</li>
+      <li>High-value items may require documentation and insurance options.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>4) Claims & Liability</h2>
+    <p class="muted">
+      If a shipment is damaged, missing, or delayed unusually, you may file a claim through the Claims page.
+    </p>
+    <p class="muted">
+      <a href="/claims">Go to Claims →</a>
+    </p>
+  </div>
+</div>
+
+<footer>© <span id="y"></span> Glopac Shipping Express</footer>
+<script>document.getElementById("y").textContent=new Date().getFullYear();</script>
+
+</body>
+</html>

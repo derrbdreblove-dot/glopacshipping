@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Glopac Shipping Express</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#ffffff;
+      --line:#e6eaf0;
+      --muted:#5a667a;
+      --good:#1f8f4e;
+      --danger:#b00020;
+      --warn:#b36b00;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:var(--bg);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .card{
+      width:100%;
+      max-width:520px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:22px;
+      box-shadow:0 12px 28px rgba(11,18,32,.12);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:center;
+      margin-bottom:14px;
+    }
+    .brand img{height:42px;width:auto;}
+    .brand .name{
+      font-weight:900;
+      color:var(--brand);
+      font-size:18px;
+      line-height:1.1;
+    }
+    .brand .tag{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    h1{
+      text-align:center;
+      margin:10px 0 4px;
+      color:#0b1220;
+      font-size:22px;
+    }
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:18px;
+      line-height:1.35;
+    }
+    .note{
+      background:#fff3cd;
+      border:1px solid #ffe69c;
+      color:#6b4a00;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    .ok{
+      background:#eaf7ef;
+      border:1px solid #cfead9;
+      color:var(--good);
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      margin-bottom:14px;
+      font-weight:800;
+    }
+    label{
+      display:block;
+      font-weight:800;
+      margin-bottom:6px;
+      font-size:13px;
+      color:#1b2a44;
+    }
+    input, textarea{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      font-size:14px;
+      margin-bottom:14px;
+      outline:none;
+      font-family:Arial, sans-serif;
+    }
+    textarea{resize:vertical; min-height:110px;}
+    input:focus, textarea:focus{border-color:var(--brand);}
+    .btn{
+      width:100%;
+      padding:14px;
+      border:0;
+      border-radius:12px;
+      background:var(--good);
+      color:#fff;
+      font-weight:900;
+      font-size:15px;
+      cursor:pointer;
+    }
+    .btn:hover{filter:brightness(.95)}
+    .err{
+      background:#fdecea;
+      color:var(--danger);
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      margin-bottom:14px;
+      border:1px solid #f5c2c7;
+      font-weight:800;
+    }
+    .links{
+      text-align:center;
+      margin-top:14px;
+      font-size:13px;
+    }
+    .links a{
+      color:var(--brand);
+      font-weight:800;
+      text-decoration:none;
+    }
+    .links a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="brand">
+      <img src="/static/img/glopacshippingexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+      <div>
+        <div class="name">Glopac Shipping Express</div>
+        <div class="tag">Account request</div>
+      </div>
+    </div>
+
+    <h1>Create an account</h1>
+    <div class="sub">
+      Submit your details to request access. We’ll contact you by email with the next steps.
+    </div>
+
+    <div class="note">
+      <b>Note:</b> This is an application form. Your account may require approval before you can log in.
+    </div>
+
+    {% if success %}
+      <div class="ok">{{ success }}</div>
+    {% endif %}
+
+    {% if error %}
+      <div class="err">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      <label>Full Name</label>
+      <input type="text" name="name" placeholder="Your full name" required>
+
+      <label>Email</label>
+      <input type="email" name="email" placeholder="you@example.com" required>
+
+      <label>Reason for signing up</label>
+      <textarea name="reason" placeholder="Tell us why you need an account (e.g., I have multiple shipments and want access to payment and tracking details)." required></textarea>
+
+      <button class="btn" type="submit">Submit application</button>
+    </form>
+
+    <div class="links">
+      <p><a href="/login">Already have access? Log in</a></p>
+      <p><a href="/">← Back to home</a></p>
+    </div>
+  </div>
+
+</body>
+</html>

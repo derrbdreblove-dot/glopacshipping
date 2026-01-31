@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blueoakexpress | Services</title>
+  <style>
+    :root{--brand:#003366;--bg:#f4f7fa;--card:#fff;--line:#e6eaf0;--muted:#5a667a;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#0b1220;}
+    a{color:var(--brand);text-decoration:none;font-weight:800}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(11,18,32,.06);margin-bottom:14px}
+    h1{margin:0 0 8px;color:var(--brand)}
+    .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    .muted{color:var(--muted);line-height:1.55}
+    .box{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+    .t{font-weight:900;color:var(--brand);margin-bottom:6px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <a href="/">← Home</a>
+    <a href="/support">Support</a>
+  </div>
+
+  <div class="card">
+    <h1>Services</h1>
+    <p class="muted">Choose the service that fits your delivery time, budget, and cargo type.</p>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <div class="t">Express Delivery</div>
+      <div class="muted">Fastest routing, priority handling, and proactive tracking updates.</div>
+    </div>
+    <div class="box">
+      <div class="t">Economy Shipping</div>
+      <div class="muted">Affordable international delivery with reliable milestone scans.</div>
+    </div>
+    <div class="box">
+      <div class="t">Freight & Cargo</div>
+      <div class="muted">Pallet shipments, bulk cargo, and coordinated partner handoffs.</div>
+    </div>
+  </div>
+</div>
+{% include "_footer.html" %}
+
+</body>
+</html>

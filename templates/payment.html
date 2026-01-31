@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glopac Shipping Express | Customs & Taxes Payment - {{ tracking_id }}</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#ffffff;
+      --muted:#5a667a;
+      --line:#e6eaf0;
+      --good:#1f8f4e;
+      --warn:#b36b00;
+    }
+    body { font-family: Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+
+    .topbar{
+      background:var(--brand2);
+      color:#fff;
+      padding:10px 18px;
+      font-size:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .topbar .links a{
+      color:#fff;opacity:.95;margin-left:14px;
+      font-weight:800;text-decoration:none;
+    }
+    .topbar .links a:hover{opacity:1;text-decoration:underline;}
+
+    header{background:var(--card);border-bottom:1px solid var(--line);}
+    .header-inner{
+      max-width:1100px;margin:0 auto;padding:14px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brandbox{display:flex;align-items:center;gap:12px;}
+    .brandbox img{height:44px;width:auto;display:block;}
+    .brandbox .name{font-weight:900;color:var(--brand);letter-spacing:.2px;font-size:18px;line-height:1.1;}
+    .brandbox .tag{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;}
+    nav a{margin-left:18px;font-weight:700;color:#0b1220;text-decoration:none;}
+    nav a:hover{color:var(--brand);text-decoration:underline;}
+
+    .container {
+      max-width: 900px;
+      margin: 28px auto;
+      background: white;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid var(--line);
+    }
+    h1 { color: var(--brand); text-align: center; margin: 6px 0 8px; }
+    .subtitle { text-align: center; color: #555; margin-bottom: 18px; }
+    .amount { font-size: 34px; font-weight: 900; color: var(--good); text-align: center; margin: 18px 0 10px; }
+
+    .pill {
+      display:inline-block;
+      background:#eef3fb;
+      border:1px solid #d7e3f7;
+      color:var(--brand);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+    }
+
+    .methods { margin: 26px 0 10px; }
+    .method-group { margin-bottom: 18px; }
+    .method-group h3 { color: var(--brand); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 12px; }
+    .method { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f9f9f9; border-radius: 10px; border:1px solid var(--line); flex-wrap:wrap; gap:10px;}
+    .method img { width: 58px; height: auto; }
+    .method p { margin: 0; color:#0b1220; }
+
+    .note {
+      background: #fff3cd;
+      padding: 14px;
+      border-radius: 12px;
+      margin: 18px 0;
+      font-size: 0.95rem;
+      border:1px solid #ffe69c;
+      color:#6b4a00;
+      line-height:1.4;
+    }
+
+    .formbox{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:16px;
+      margin-top:18px;
+    }
+    label{
+      display:block;
+      font-weight:900;
+      color:#1b2a44;
+      margin:10px 0 6px;
+      font-size:13px;
+    }
+    input, select{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    input:focus, select:focus{border-color:var(--brand);}
+
+    .btn {
+      display: block;
+      width: 360px;
+      margin: 18px auto 10px;
+      padding: 15px;
+      background: var(--brand);
+      color: white;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--brand2); }
+    .back { text-align: center; margin-top: 18px; }
+    .back a{color:var(--brand);font-weight:800;text-decoration:none;}
+    .back a:hover{text-decoration:underline;}
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+      margin-top:8px;
+      text-align:center;
+    }
+
+    @media (max-width: 780px){
+      .container{margin:18px 12px;padding:18px;}
+      nav{display:none;}
+      .btn{width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>Glopac Shipping Express • Secure payment initiation</div>
+    <div class="links">
+      <a href="/policies">Policies</a>
+      <a href="/support">Support</a>
+      {% if user %}
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brandbox">
+        <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+        <div>
+          <div class="name">Glopac Shipping Express</div>
+          <div class="tag">Track • Ship • Deliver</div>
+        </div>
+      </div>
+      <nav>
+        <a href="/">Track</a>
+        <a href="/support">Help</a>
+      </nav>
+    </div>
+  </header>
+
+  {% set amt = (fees.amount or 0) %}
+  {% set amt_str = "{:,.2f}".format(amt|float) %}
+
+  <div class="container">
+    <h1>Customs & Taxes Payment</h1>
+
+    <p class="subtitle">
+      <span class="pill">Tracking ID: {{ tracking_id }}</span>
+      &nbsp; • &nbsp;
+      Amount Due: <b>${{ amt_str }}</b> ({{ fees.reason }})
+    </p>
+
+    <div class="amount">${{ amt_str }}</div>
+
+    <div class="methods">
+      <div class="method-group">
+        <h3>Accepted Methods (choose below)</h3>
+        <div class="method">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Visa_2021.svg/120px-Visa_2021.svg.png" alt="Visa">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/120px-MasterCard_Logo.svg.png" alt="Mastercard">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/120px-PayPal.svg.png" alt="PayPal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/120px-Bitcoin.svg.png" alt="Bitcoin">
+          <p>Card, Wallets, Bank Transfer, Crypto (BTC/USDT/USDC/ETH)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>How it works:</strong> Choose your payment method and confirm your email, then tap
+      <b>Initiate Payment</b>. A unique 8-character code will be generated. You will be taken to a secure chat page
+      where you can send that code for verification. Once verified by Glopac Shipping Express, your shipment will be released.
+    </div>
+
+    <form class="formbox" action="/initiate_payment/{{ tracking_id }}" method="post">
+      <label>Payment Method</label>
+      <select name="payment_method" required>
+        <option value="" selected disabled>Select a method…</option>
+        <option value="Credit/Debit Card">Credit/Debit Card</option>
+        <option value="PayPal">PayPal</option>
+        <option value="Apple Pay">Apple Pay</option>
+        <option value="Google Pay">Google Pay</option>
+        <option value="Bank Transfer (ACH/Wire/SWIFT)">Bank Transfer (ACH/Wire/SWIFT)</option>
+        <option value="Crypto (BTC/USDT/USDC/ETH)">Crypto (BTC/USDT/USDC/ETH)</option>
+      </select>
+
+      <label>Your Email</label>
+      <input type="email" name="payer_email" placeholder="you@example.com" required>
+
+      <button type="submit" class="btn">Initiate Payment</button>
+
+      <div class="small">
+        After you initiate payment, you’ll receive a code and a chat page will open automatically.
+      </div>
+    </form>
+
+    <p class="back"><a href="/track?tracking_id={{ tracking_id }}">← Back to Tracking</a></p>
+  </div>
+
+</body>
+</html>

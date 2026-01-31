@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Messages | Glopac Shipping Express</title>
+  <style>
+    :root{--brand:#003366;--brand2:#002244;--bg:#f4f7fa;--card:#fff;--line:#e6eaf0;--muted:#5a667a;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#0b1220;}
+    .topbar{background:var(--brand2);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center}
+    .topbar a{color:#fff;font-weight:900;text-decoration:none;opacity:.95;margin-left:14px}
+    .topbar a:hover{opacity:1;text-decoration:underline}
+    .wrap{max-width:1100px;margin:18px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 26px rgba(11,18,32,.08);padding:16px;}
+    h1{margin:0 0 10px;color:var(--brand)}
+    .muted{color:var(--muted);font-size:13px}
+    .list{margin-top:12px;display:grid;gap:10px}
+    .item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;display:flex;justify-content:space-between;gap:12px}
+    .t{font-weight:900}
+    a{color:var(--brand);font-weight:900;text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>Glopac Shipping Express Admin • Messages</div>
+    <div>
+      <a href="/admin">Admin Panel</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h1>Payment Chats</h1>
+      <div class="muted">Open a thread to reply to the user.</div>
+
+      <div class="list">
+        {% if threads and threads|length > 0 %}
+          {% for t in threads %}
+            <div class="item">
+              <div>
+                <div class="t">{{ t.tracking_id }} • {{ t.status }}</div>
+                <div class="muted">Owner: {{ t.owner_email or "Unassigned" }} • Code: {{ t.code or "—" }}</div>
+                <div class="muted" style="margin-top:6px;">Last: {{ t.last_text }}</div>
+              </div>
+              <div>
+                <a href="/admin/messages/{{ t.thread_id }}">Open →</a>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="muted" style="margin-top:12px;">No chats yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,670 @@
+{
+    "ABC123XYZ": {
+        "owner_email": "alex.owner@glopacshippingexpress.com",
+        "status": "In Transit",
+        "estimated_delivery": "2026-01-15",
+        "origin": "New York, USA",
+        "destination": "London, UK",
+        "package_details": "Electronics - 2kg",
+        "route": [
+            {
+                "lat": 40.7128,
+                "lng": -74.006,
+                "label": "New York - Origin"
+            },
+            {
+                "lat": 51.5074,
+                "lng": -0.1278,
+                "label": "London - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 40.7128,
+            "lng": -74.006
+        },
+        "events": [
+            {
+                "date": "2026-01-05 10:00",
+                "location": "New York Warehouse",
+                "description": "Package Received"
+            },
+            {
+                "date": "2026-01-06 14:30",
+                "location": "New York Airport",
+                "description": "Departed Origin"
+            },
+            {
+                "date": "2026-01-09 01:07",
+                "location": "Online Payment",
+                "description": "Customs/Taxes Paid - Shipment Resumed"
+            },
+            {
+                "date": "2026-01-09 01:14",
+                "location": "Online Payment",
+                "description": "Customs/Taxes Paid - Shipment Released"
+            },
+            {
+                "date": "2026-01-10 09:00",
+                "location": "London Customs",
+                "description": "Arrived at Destination Country"
+            }
+        ],
+        "fees": {
+            "amount": 45.5,
+            "reason": "Customs and Taxes",
+            "paid": true
+        }
+    },
+    "TEST456789": {
+        "owner_email": "mina.owner@glopacshippingexpress.com",
+        "status": "Delivered",
+        "estimated_delivery": "2026-01-12",
+        "origin": "Tokyo, Japan",
+        "destination": "Sydney, Australia",
+        "package_details": "Clothing - 1.5kg",
+        "route": [
+            {
+                "lat": 35.6762,
+                "lng": 139.6503,
+                "label": "Tokyo"
+            },
+            {
+                "lat": -33.8688,
+                "lng": 151.2093,
+                "label": "Sydney"
+            }
+        ],
+        "current_location": {
+            "lat": -33.8688,
+            "lng": 151.2093
+        },
+        "events": [
+            {
+                "date": "2026-01-01 08:00",
+                "location": "Tokyo Depot",
+                "description": "Shipped"
+            },
+            {
+                "date": "2026-01-12 11:00",
+                "location": "Sydney",
+                "description": "Delivered"
+            }
+        ],
+        "fees": null
+    },
+    "BOE938271": {
+        "owner_email": "kwame.owner@glopacshippingexpress.com",
+        "status": "Label Created",
+        "estimated_delivery": "2026-01-30",
+        "origin": "Accra, Ghana",
+        "destination": "Paris, France",
+        "package_details": "Documents - 0.3kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-26 09:05",
+                "location": "Accra",
+                "description": "Shipping Label Created"
+            },
+            {
+                "date": "2026-01-26 10:12",
+                "location": "Accra",
+                "description": "Pickup Scheduled"
+            }
+        ],
+        "fees": null
+    },
+    "BOE104857": {
+        "owner_email": "hans.owner@glopacshippingexpress.com",
+        "status": "Picked Up",
+        "estimated_delivery": "2026-02-02",
+        "origin": "Berlin, Germany",
+        "destination": "Toronto, Canada",
+        "package_details": "Auto Parts - 8kg",
+        "route": [
+            {
+                "lat": 52.52,
+                "lng": 13.405,
+                "label": "Berlin - Origin"
+            },
+            {
+                "lat": 50.1109,
+                "lng": 8.6821,
+                "label": "Frankfurt Hub"
+            },
+            {
+                "lat": 43.6532,
+                "lng": -79.3832,
+                "label": "Toronto - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 50.1109,
+            "lng": 8.6821
+        },
+        "events": [
+            {
+                "date": "2026-01-24 15:40",
+                "location": "Berlin",
+                "description": "Shipment Information Received"
+            },
+            {
+                "date": "2026-01-25 09:20",
+                "location": "Berlin",
+                "description": "Picked Up"
+            },
+            {
+                "date": "2026-01-25 18:05",
+                "location": "Frankfurt Hub",
+                "description": "Arrived at Sort Facility"
+            }
+        ],
+        "fees": null
+    },
+    "BOE665544": {
+        "owner_email": "lucas.owner@glopacshippingexpress.com",
+        "status": "In Transit",
+        "estimated_delivery": "2026-01-29",
+        "origin": "Los Angeles, USA",
+        "destination": "Mexico City, Mexico",
+        "package_details": "Consumer Goods - 12kg",
+        "route": [
+            {
+                "lat": 34.0522,
+                "lng": -118.2437,
+                "label": "Los Angeles - Origin"
+            },
+            {
+                "lat": 32.7157,
+                "lng": -117.1611,
+                "label": "San Diego Gateway"
+            },
+            {
+                "lat": 19.4326,
+                "lng": -99.1332,
+                "label": "Mexico City - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 32.7157,
+            "lng": -117.1611
+        },
+        "events": [
+            {
+                "date": "2026-01-22 08:10",
+                "location": "Los Angeles",
+                "description": "Package Received"
+            },
+            {
+                "date": "2026-01-22 20:45",
+                "location": "Los Angeles",
+                "description": "Departed Origin Facility"
+            },
+            {
+                "date": "2026-01-23 06:30",
+                "location": "San Diego Gateway",
+                "description": "Arrived at Border Gateway"
+            },
+            {
+                "date": "2026-01-23 11:20",
+                "location": "San Diego Gateway",
+                "description": "In Transit to Destination Country"
+            }
+        ],
+        "fees": null
+    },
+    "BOE900111": {
+        "owner_email": "amina.owner@glopacshippingexpress.com",
+        "status": "On Hold",
+        "estimated_delivery": null,
+        "origin": "Dubai, UAE",
+        "destination": "Johannesburg, South Africa",
+        "package_details": "Luxury Watches - 3kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-20 12:30",
+                "location": "Dubai",
+                "description": "Package Received"
+            },
+            {
+                "date": "2026-01-21 02:15",
+                "location": "Dubai Airport",
+                "description": "Departed Origin"
+            },
+            {
+                "date": "2026-01-22 09:40",
+                "location": "Nairobi Hub",
+                "description": "Arrived at Transit Hub"
+            },
+            {
+                "date": "2026-01-22 12:05",
+                "location": "Nairobi Hub",
+                "description": "Held for Customs Review - Duties/Taxes Required"
+            },
+            {
+                "date": "2026-01-29 13:32",
+                "location": "Online Payment",
+                "description": "Payment Submitted - Awaiting Verification"
+            },
+            {
+                "date": "2026-01-29 14:18",
+                "location": "Online Payment",
+                "description": "Payment initiated (Bank Transfer (ACH/Wire/SWIFT)). Code generated."
+            }
+        ],
+        "fees": {
+            "amount": 125000.0,
+            "reason": "Customs and Taxes",
+            "paid": false,
+            "payment_submitted": true,
+            "payment_method": "Bank Transfer (ACH/Wire/SWIFT)",
+            "payer_email": "tra@gmail.com",
+            "payment_code": "KZW5TSYE"
+        },
+        "estimated_delivery_tbd_on_hold": true
+    },
+    "BOE772299": {
+        "owner_email": "chidi.owner@glopacshippingexpress.com",
+        "status": "On Hold",
+        "estimated_delivery": "2026-02-10",
+        "origin": "Shanghai, China",
+        "destination": "Lagos, Nigeria",
+        "package_details": "Industrial Equipment - 210kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-14 09:00",
+                "location": "Shanghai",
+                "description": "Shipment Picked Up"
+            },
+            {
+                "date": "2026-01-15 21:10",
+                "location": "Shanghai Port",
+                "description": "Departed Origin Port"
+            },
+            {
+                "date": "2026-01-22 07:30",
+                "location": "Singapore Hub",
+                "description": "Arrived at Transshipment Hub"
+            },
+            {
+                "date": "2026-01-26 16:40",
+                "location": "Lagos",
+                "description": "Arrived at Destination Country"
+            },
+            {
+                "date": "2026-01-26 18:05",
+                "location": "Lagos Customs",
+                "description": "Held for Duties/Taxes Payment"
+            }
+        ],
+        "fees": {
+            "amount": 280000,
+            "reason": "Customs and Taxes",
+            "paid": false
+        }
+    },
+    "BOE314159": {
+        "owner_email": "sophia.owner@glopacshippingexpress.com",
+        "status": "On Hold",
+        "estimated_delivery": "2026-02-06",
+        "origin": "Zurich, Switzerland",
+        "destination": "New York, USA",
+        "package_details": "Fine Jewelry - 1.2kg",
+        "route": [
+            {
+                "lat": 47.3769,
+                "lng": 8.5417,
+                "label": "Zurich - Origin"
+            },
+            {
+                "lat": 48.1351,
+                "lng": 11.582,
+                "label": "Munich Hub"
+            },
+            {
+                "lat": 40.7128,
+                "lng": -74.006,
+                "label": "New York - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 40.7128,
+            "lng": -74.006
+        },
+        "events": [
+            {
+                "date": "2026-01-18 10:25",
+                "location": "Zurich",
+                "description": "Package Received"
+            },
+            {
+                "date": "2026-01-18 22:40",
+                "location": "Zurich Airport",
+                "description": "Departed Origin"
+            },
+            {
+                "date": "2026-01-19 06:50",
+                "location": "Munich Hub",
+                "description": "Arrived at Transit Facility"
+            },
+            {
+                "date": "2026-01-20 17:35",
+                "location": "New York",
+                "description": "Arrived at Destination Country"
+            },
+            {
+                "date": "2026-01-20 18:30",
+                "location": "New York Customs",
+                "description": "Held for Customs/Taxes Payment"
+            }
+        ],
+        "fees": {
+            "amount": 420000,
+            "reason": "Customs and Taxes",
+            "paid": false
+        }
+    },
+    "BOE808080": {
+        "owner_email": "kofi.owner@glopacshippingexpress.com",
+        "status": "On Hold",
+        "estimated_delivery": "2026-02-04",
+        "origin": "London, UK",
+        "destination": "Accra, Ghana",
+        "package_details": "Medical Supplies - 28kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-19 08:10",
+                "location": "London",
+                "description": "Picked Up"
+            },
+            {
+                "date": "2026-01-19 23:30",
+                "location": "London Airport",
+                "description": "Departed Origin"
+            },
+            {
+                "date": "2026-01-21 05:20",
+                "location": "Dakar Hub",
+                "description": "Arrived at Transit Hub"
+            },
+            {
+                "date": "2026-01-23 14:10",
+                "location": "Accra",
+                "description": "Arrived at Destination Country"
+            },
+            {
+                "date": "2026-01-23 16:05",
+                "location": "Accra Customs",
+                "description": "Held for Duties/Taxes Payment"
+            },
+            {
+                "date": "2026-01-31 04:11",
+                "location": "Payment Chat",
+                "description": "Verification code received - awaiting payment details"
+            },
+            {
+                "date": "2026-01-31 04:54",
+                "location": "System",
+                "description": "Shipment record created"
+            },
+            {
+                "date": "2026-01-31 04:54",
+                "location": "Customs / Compliance",
+                "description": "Shipment placed on hold"
+            }
+        ],
+        "fees": {
+            "amount": 10000,
+            "reason": "Customs and Taxes",
+            "paid": false,
+            "payment_method": "Apple Pay",
+            "payer_email": "tra343434@gmail.com",
+            "init_code": "N8JNDOCI",
+            "init_code_received": true,
+            "payment_submitted": true,
+            "initiated_at": "2026-01-31 04:11"
+        },
+        "_auto_event_keys": [
+            "milestone_created",
+            "milestone_on_hold"
+        ]
+    },
+    "BOE505050": {
+        "owner_email": "maria.owner@glopacshippingexpress.com",
+        "status": "On Hold",
+        "estimated_delivery": "2026-02-12",
+        "origin": "S\u00e3o Paulo, Brazil",
+        "destination": "Madrid, Spain",
+        "package_details": "Artwork - 15kg",
+        "route": [
+            {
+                "lat": -23.5505,
+                "lng": -46.6333,
+                "label": "S\u00e3o Paulo - Origin"
+            },
+            {
+                "lat": -8.0578,
+                "lng": -34.8829,
+                "label": "Recife Gateway"
+            },
+            {
+                "lat": 40.4168,
+                "lng": -3.7038,
+                "label": "Madrid - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 40.4168,
+            "lng": -3.7038
+        },
+        "events": [
+            {
+                "date": "2026-01-16 13:15",
+                "location": "S\u00e3o Paulo",
+                "description": "Shipment Received"
+            },
+            {
+                "date": "2026-01-17 09:40",
+                "location": "Recife Gateway",
+                "description": "Departed Export Gateway"
+            },
+            {
+                "date": "2026-01-25 18:20",
+                "location": "Madrid",
+                "description": "Arrived at Destination Country"
+            },
+            {
+                "date": "2026-01-25 19:10",
+                "location": "Madrid Customs",
+                "description": "Held for Duties/Taxes Payment"
+            },
+            {
+                "date": "2026-01-28 06:55",
+                "location": "Online Payment",
+                "description": "Payment Submitted - Awaiting Verification"
+            }
+        ],
+        "fees": {
+            "amount": 220000,
+            "reason": "Customs and Taxes",
+            "paid": false,
+            "payment_submitted": true
+        }
+    },
+    "BOE121212": {
+        "owner_email": "jason.owner@glopacshippingexpress.com",
+        "status": "Out for Delivery",
+        "estimated_delivery": "2026-01-28",
+        "origin": "Miami, USA",
+        "destination": "Kingston, Jamaica",
+        "package_details": "Home Appliances - 35kg",
+        "route": [
+            {
+                "lat": 25.7617,
+                "lng": -80.1918,
+                "label": "Miami - Origin"
+            },
+            {
+                "lat": 23.1136,
+                "lng": -82.3666,
+                "label": "Havana Hub"
+            },
+            {
+                "lat": 17.9712,
+                "lng": -76.7936,
+                "label": "Kingston - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 17.9712,
+            "lng": -76.7936
+        },
+        "events": [
+            {
+                "date": "2026-01-21 10:00",
+                "location": "Miami",
+                "description": "Picked Up"
+            },
+            {
+                "date": "2026-01-22 03:20",
+                "location": "Miami Port",
+                "description": "Departed Origin Port"
+            },
+            {
+                "date": "2026-01-24 08:45",
+                "location": "Havana Hub",
+                "description": "Arrived at Transit Hub"
+            },
+            {
+                "date": "2026-01-26 12:10",
+                "location": "Kingston",
+                "description": "Arrived at Destination Facility"
+            },
+            {
+                "date": "2026-01-28 07:05",
+                "location": "Kingston",
+                "description": "Out for Delivery"
+            }
+        ],
+        "fees": null
+    },
+    "BOE999000": {
+        "owner_email": "hana.owner@glopacshippingexpress.com",
+        "status": "Delayed",
+        "estimated_delivery": "2026-02-03",
+        "origin": "Seoul, South Korea",
+        "destination": "San Francisco, USA",
+        "package_details": "Computer Hardware - 6kg",
+        "route": [
+            {
+                "lat": 37.5665,
+                "lng": 126.978,
+                "label": "Seoul - Origin"
+            },
+            {
+                "lat": 35.5494,
+                "lng": 129.3114,
+                "label": "Ulsan Port"
+            },
+            {
+                "lat": 21.3069,
+                "lng": -157.8583,
+                "label": "Honolulu Hub"
+            },
+            {
+                "lat": 37.7749,
+                "lng": -122.4194,
+                "label": "San Francisco - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 21.3069,
+            "lng": -157.8583
+        },
+        "events": [
+            {
+                "date": "2026-01-20 09:30",
+                "location": "Seoul",
+                "description": "Shipment Received"
+            },
+            {
+                "date": "2026-01-21 01:15",
+                "location": "Ulsan Port",
+                "description": "Departed Origin Port"
+            },
+            {
+                "date": "2026-01-26 06:55",
+                "location": "Honolulu Hub",
+                "description": "Arrived at Transit Hub"
+            },
+            {
+                "date": "2026-01-26 11:40",
+                "location": "Honolulu Hub",
+                "description": "Delayed Due to Weather at Transit Hub"
+            }
+        ],
+        "fees": null
+    },
+    "BOE700700": {
+        "owner_email": "noah.owner@glopacshippingexpress.com",
+        "status": "Delivered",
+        "estimated_delivery": "2026-01-22",
+        "origin": "Cape Town, South Africa",
+        "destination": "Nairobi, Kenya",
+        "package_details": "Books - 5kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-14 10:10",
+                "location": "Cape Town",
+                "description": "Picked Up"
+            },
+            {
+                "date": "2026-01-15 19:45",
+                "location": "Cape Town",
+                "description": "Departed Origin Facility"
+            },
+            {
+                "date": "2026-01-18 08:00",
+                "location": "Harare Hub",
+                "description": "Arrived at Transit Hub"
+            },
+            {
+                "date": "2026-01-21 16:30",
+                "location": "Nairobi",
+                "description": "Arrived at Destination Facility"
+            },
+            {
+                "date": "2026-01-22 12:05",
+                "location": "Nairobi",
+                "description": "Delivered - Signed For"
+            }
+        ],
+        "fees": null
+    },
+    "ABC123XYT": {
+        "status": "In Transit",
+        "owner_email": "tra@gmail.com",
+        "origin": "Sydney, Australlia",
+        "destination": "London, Uk",
+        "package_details": "Electronics 10kg",
+        "estimated_delivery_tbd_on_hold": false,
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2026-01-29 15:04",
+                "location": "Admin Update",
+                "description": "Status updated: N/A \u2192 In Transit"
+            }
+        ]
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "BOE900111": {
+        "tracking_id": "BOE900111",
+        "owner_email": "amina.owner@blueoakexpress.com",
+        "messages": [
+            {
+                "ts": 1769879431,
+                "time": "2026-01-31 01:10",
+                "sender": "admin",
+                "text": "Hi"
+            },
+            {
+                "ts": 1769888146,
+                "time": "2026-01-31 03:35",
+                "sender": "admin",
+                "text": "hi"
+            }
+        ]
+    },
+    "BOE700700": {
+        "tracking_id": "BOE700700",
+        "owner_email": "noah.owner@blueoakexpress.com",
+        "messages": []
+    },
+    "ABC123XYZ": {
+        "tracking_id": "ABC123XYZ",
+        "owner_email": "alex.owner@glopacshippingexpress.com",
+        "messages": []
+    },
+    "BOE808080": {
+        "tracking_id": "BOE808080",
+        "owner_email": "kofi.owner@glopacshippingexpress.com",
+        "messages": [
+            {
+                "ts": 1769890274,
+                "time": "2026-01-31 04:11",
+                "sender": "system",
+                "text": "Payment initiated. Your verification code is: N8JNDOCI. Please send this code in this chat to continue."
+            },
+            {
+                "ts": 1769890274,
+                "time": "2026-01-31 04:11",
+                "sender": "system",
+                "text": "A representative will be in touch with you shortly."
+            },
+            {
+                "ts": 1769890300,
+                "time": "2026-01-31 04:11",
+                "sender": "user",
+                "text": "N8JNDOCI"
+            },
+            {
+                "ts": 1769890300,
+                "time": "2026-01-31 04:11",
+                "sender": "system",
+                "text": "\u2705 Your request is being processed. You will receive payment details to make payment shortly."
+            },
+            {
+                "ts": 1769890375,
+                "time": "2026-01-31 04:12",
+                "sender": "admin",
+                "text": "ok i will send you the payment information"
+            },
+            {
+                "ts": 1769890545,
+                "time": "2026-01-31 04:15",
+                "sender": "user",
+                "text": "ok waiting"
+            }
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "pay:BOE900111": [
+        {
+            "ts": "2026-01-29 14:18",
+            "sender": "system",
+            "sender_email": "system",
+            "text": "Payment code generated: KZW5TSYE. Send this code here for admin verification."
+        },
+        {
+            "ts": "2026-01-29 14:18",
+            "sender": "user",
+            "sender_email": "amina.owner@blueoakexpress.com",
+            "text": "my payment code is KZW5TSYE"
+        }
+    ]
+}

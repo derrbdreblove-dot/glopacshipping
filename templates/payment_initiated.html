@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blueoakexpress | Payment Started - {{ tracking_id }}</title>
+  <style>
+    :root{
+      --brand:#003366; --brand2:#002244; --bg:#f4f7fa; --card:#fff;
+      --muted:#5a667a; --line:#e6eaf0; --good:#1f8f4e;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#0b1220;}
+    a{color:var(--brand);text-decoration:none;font-weight:800}
+    a:hover{text-decoration:underline}
+
+    .topbar{
+      background:var(--brand2);color:#fff;padding:10px 18px;font-size:14px;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .topbar a{color:#fff;opacity:.95;margin-left:14px}
+    .topbar a:hover{opacity:1}
+
+    .wrap{max-width:980px;margin:22px auto;padding:0 16px;}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:14px;
+      box-shadow:0 10px 26px rgba(11,18,32,.08);overflow:hidden;
+    }
+    .head{
+      padding:18px;border-bottom:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(0,51,102,.95), rgba(0,34,68,.95));
+      color:#fff;
+    }
+    .head h1{margin:0 0 6px;font-size:22px}
+    .head .sub{opacity:.92;font-size:13px;line-height:1.35}
+    .body{padding:18px}
+    .codebox{
+      border:1px dashed rgba(0,51,102,.35);
+      background:#f7fbff;border-radius:12px;padding:14px;margin:12px 0;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .code{
+      font-weight:900;font-size:20px;letter-spacing:2px;color:var(--brand);
+    }
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid var(--line);background:#f8fafc;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+    .box{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    .label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}
+    .val{font-weight:900}
+
+    .chat{
+      margin-top:14px;border-top:1px solid var(--line);padding-top:14px;
+    }
+    .msgs{display:grid;gap:10px;margin-top:10px}
+    .msg{
+      border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;
+    }
+    .msg .meta{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:800}
+    .msg.admin{border-left:5px solid var(--brand)}
+    .msg.user{border-left:5px solid var(--good)}
+    .msg.system{border-left:5px solid #888}
+
+    textarea{
+      width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;
+      resize:vertical;min-height:90px;font-family:Arial,sans-serif;font-size:14px;
+      outline:none;
+    }
+    textarea:focus{border-color:var(--brand)}
+    .row{display:flex;gap:10px;align-items:center;margin-top:10px}
+    .btn{
+      padding:12px 14px;border:0;border-radius:12px;background:var(--good);
+      color:#fff;font-weight:900;cursor:pointer;
+    }
+    .btn:hover{filter:brightness(.95)}
+    @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>Blueoakexpress • Payment started</div>
+    <div>
+      <a href="/track?tracking_id={{ tracking_id }}">Back to tracking</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1>Payment Initiated</h1>
+        <div class="sub">
+          Your request has been created. Use the code below when messaging support (in the chat).
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="codebox">
+          <div>
+            <div class="pill">Tracking: {{ tracking_id }}</div>
+            <div style="height:8px"></div>
+            <div class="code">{{ code }}</div>
+            <div style="margin-top:6px;color:#334155;font-size:13px;">
+              Keep this code. Send it in chat to speed up verification.
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="box">
+            <div class="label">Payment Method</div>
+            <div class="val">{{ payment_method }}</div>
+          </div>
+          <div class="box">
+            <div class="label">Email</div>
+            <div class="val">{{ payer_email }}</div>
+          </div>
+          <div class="box">
+            <div class="label">Amount</div>
+            <div class="val">${{ "{:,.2f}".format((amount or 0)|float) }}</div>
+          </div>
+          <div class="box">
+            <div class="label">Reason</div>
+            <div class="val">{{ reason }}</div>
+          </div>
+        </div>
+
+        <div class="chat">
+          <h3 style="margin:0;color:#003366;">Chat with Blueoakexpress</h3>
+          <div class="label" style="margin-top:6px;">
+            Tip: include your code <b>{{ code }}</b> in your message.
+          </div>
+
+          <div class="msgs">
+            {% if messages and messages|length > 0 %}
+              {% for m in messages %}
+                <div class="msg {{ m.from }}">
+                  <div class="meta">
+                    {{ (m.from|upper) }} • {{ m.ts }}
+                    {% if m.email %} • {{ m.email }}{% endif %}
+                  </div>
+                  <div>{{ m.text }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="msg system">
+                <div class="meta">SYSTEM</div>
+                <div>No messages yet. Send a message below to start.</div>
+              </div>
+            {% endif %}
+          </div>
+
+          <form action="/payment/chat/{{ tracking_id }}/send" method="post" style="margin-top:12px;">
+            <textarea name="message" placeholder="Write your message here... (example: Hello, I initiated payment. My code is {{ code }}.)" required></textarea>
+            <div class="row">
+              <button class="btn" type="submit">Send Message</button>
+              <a href="/track?tracking_id={{ tracking_id }}">Back to tracking →</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

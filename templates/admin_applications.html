@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glopac Shipping Express | Applications</title>
+  <style>
+    :root{ --brand:#003366; --bg:#f4f7fa; --card:#fff; --line:#e6eaf0; --muted:#5a667a; --good:#1f8f4e; --bad:#e74c3c;}
+    body{ margin:0; font-family:Arial,sans-serif; background:var(--bg); padding:18px; }
+    .top{ max-width:1200px; margin:0 auto 14px; display:flex; justify-content:space-between; align-items:center; }
+    a{ color:var(--brand); font-weight:900; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    .wrap{ max-width:1200px; margin:0 auto; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; }
+    h1{ margin:0 0 10px; color:var(--brand); }
+    .muted{ color:var(--muted); }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    th, td{ border-bottom:1px solid var(--line); padding:10px; text-align:left; vertical-align:top; }
+    th{ color:#1b2a44; }
+    input{ padding:8px; border:1px solid var(--line); border-radius:10px; width:170px; }
+    button{ padding:8px 12px; border:0; border-radius:10px; color:#fff; font-weight:900; cursor:pointer; }
+    .approve{ background:var(--good); }
+    .reject{ background:var(--bad); }
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:900; border:1px solid var(--line); background:#f8fafc; color:var(--muted);}
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div>
+      <a href="/admin">Admin</a> &nbsp;|&nbsp;
+      <a href="/">Home</a> &nbsp;|&nbsp;
+      <a href="/logout">Logout</a>
+    </div>
+    <div class="muted">Admin: {{ user.email }}</div>
+  </div>
+
+  <div class="wrap">
+    <h1>Signup Applications</h1>
+    <div class="muted">Approve to create the user account and set their password.</div>
+
+    {% if applications and applications|length > 0 %}
+      <table>
+        <tr>
+          <th>Submitted</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+
+        {% for a in applications %}
+        <tr>
+          <td>{{ a.submitted_at }}</td>
+          <td>{{ a.name }}</td>
+          <td>{{ a.email }}</td>
+          <td>{{ a.reason }}</td>
+          <td><span class="pill">{{ a.status }}</span></td>
+          <td>
+            {% if a.status != "approved" %}
+              <form action="/approve_application/{{ a.email }}" method="post" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <input name="password" type="text" placeholder="Set password" required />
+                <button class="approve" type="submit">Approve</button>
+              </form>
+              <form action="/reject_application/{{ a.email }}" method="post">
+                <button class="reject" type="submit">Reject</button>
+              </form>
+            {% else %}
+              <span class="muted">Approved</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted" style="margin-top:14px;">No applications yet.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>

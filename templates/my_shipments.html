@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glopac Shipping Express | My Shipments</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#fff;
+      --line:#e6eaf0;
+      --muted:#5a667a;
+      --good:#1f8f4e;
+      --warn:#b36b00;
+      --danger:#b42318;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:var(--bg);
+      color:#0b1220;
+    }
+    a{ color:var(--brand); font-weight:900; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* Top gradient header */
+    .hero{
+      background: linear-gradient(135deg, rgba(0,51,102,.95), rgba(0,34,68,.95));
+      color:#fff;
+      padding:18px;
+      border-bottom:1px solid rgba(255,255,255,.15);
+    }
+    .hero-inner{
+      max-width:1100px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .brandbox{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brandbox img{
+      height:44px;
+      width:auto;
+      border-radius:10px;
+      background:rgba(255,255,255,.12);
+      padding:6px;
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .brandtitle{
+      font-weight:900;
+      font-size:18px;
+      line-height:1.1;
+    }
+    .brandsub{
+      font-size:12px;
+      opacity:.9;
+      font-weight:700;
+      margin-top:2px;
+    }
+    .hero-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:900;
+      color:#fff;
+    }
+    .navlinks a{
+      color:#fff;
+      font-weight:900;
+      opacity:.95;
+      margin-left:12px;
+    }
+    .navlinks a:hover{ opacity:1; }
+
+    /* Main wrap */
+    .wrap{
+      max-width:1100px;
+      margin:16px auto 60px;
+      padding:0 18px;
+    }
+
+    /* Summary cards */
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:12px;
+      margin-top:-22px;
+    }
+    .stat{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 10px 24px rgba(11,18,32,.06);
+    }
+    .stat .k{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .stat .v{
+      font-size:22px;
+      font-weight:900;
+      margin-top:6px;
+      color:#0b1220;
+    }
+
+    /* Toolbar */
+    .toolbar{
+      margin-top:16px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    h1{ margin:0; color:var(--brand); }
+    .muted{ color:var(--muted); }
+
+    .search{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search input{
+      width:320px;
+      max-width:80vw;
+      padding:12px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      background:#fff;
+      font-size:14px;
+    }
+    .search select{
+      padding:12px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      background:#fff;
+      font-weight:800;
+      color:#22324d;
+    }
+
+    /* List */
+    .card{
+      margin-top:12px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 10px 24px rgba(11,18,32,.06);
+    }
+    .list{ margin-top:8px; display:grid; gap:10px; }
+
+    .item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#fff;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .item:hover{
+      transform: translateY(-1px);
+      box-shadow:0 10px 20px rgba(11,18,32,.08);
+    }
+
+    .left{ min-width:0; }
+    .tid{
+      font-weight:900;
+      font-size:16px;
+      color:#0b1220;
+    }
+    .small{ font-size:13px; color:var(--muted); margin-top:6px; line-height:1.35; }
+
+    .right{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-end;
+      min-width:170px;
+    }
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:12px;
+      background:var(--brand);
+      color:#fff;
+      font-weight:900;
+      text-decoration:none;
+      text-align:center;
+      width:170px;
+    }
+    .btn:hover{ background:var(--brand2); text-decoration:none; }
+
+    /* Status pills */
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      color:var(--muted);
+      margin-top:8px;
+    }
+    .pill-good{ background:#eaf7ef; border-color:#cfead9; color:var(--good); }
+    .pill-warn{ background:#fff3cd; border-color:#ffe69c; color:var(--warn); }
+    .pill-bad{ background:#ffe4e6; border-color:#fecdd3; color:var(--danger); }
+
+    /* Empty state */
+    .empty{
+      text-align:center;
+      padding:28px 10px;
+    }
+    .empty .big{
+      font-size:18px;
+      font-weight:900;
+      color:var(--brand);
+      margin-bottom:6px;
+    }
+
+    @media (max-width: 980px){
+      .stats{ grid-template-columns:1fr 1fr; }
+      .item{ flex-direction:column; align-items:stretch; }
+      .right{ align-items:flex-start; min-width:0; }
+      .btn{ width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top hero header -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="brandbox">
+        <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+        <div>
+          <div class="brandtitle">Glopac Shipping Express</div>
+          <div class="brandsub">My Shipments • Track • Pay • Manage</div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="chip">Logged in as: {{ user.email }}</div>
+        <div class="navlinks">
+          <a href="/">Home</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Summary stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="k">TOTAL SHIPMENTS</div>
+        <div class="v" id="statTotal">0</div>
+      </div>
+      <div class="stat">
+        <div class="k">ACTIVE</div>
+        <div class="v" id="statActive">0</div>
+      </div>
+      <div class="stat">
+        <div class="k">DELIVERED</div>
+        <div class="v" id="statDelivered">0</div>
+      </div>
+      <div class="stat">
+        <div class="k">FEES PENDING</div>
+        <div class="v" id="statFees">0</div>
+      </div>
+    </div>
+
+    <!-- Title + tools -->
+    <div class="toolbar">
+      <div>
+        <h1>My Shipments</h1>
+        <div class="muted">These are shipments assigned to your account email.</div>
+      </div>
+
+      <div class="search">
+        <input id="q" type="text" placeholder="Search by tracking ID, origin, destination..." />
+        <select id="filter">
+          <option value="all">All statuses</option>
+          <option value="active">Active</option>
+          <option value="delivered">Delivered</option>
+          <option value="hold">On Hold</option>
+          <option value="delayed">Delayed</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      {% if shipments and shipments|length > 0 %}
+        <div class="list" id="list">
+          {% for s in shipments %}
+            {% set st = (s.status or '')|lower %}
+            {% set is_del = 'delivered' in st %}
+            {% set is_hold = 'hold' in st %}
+            {% set is_delay = 'delayed' in st %}
+            {% set is_active = (not is_del) %}
+            {% set fee_pending = (s.fees and (not s.fees.paid)) %}
+
+            <div class="item"
+                 data-status="{{ s.status }}"
+                 data-search="{{ (s.tracking_id ~ ' ' ~ (s.origin or '') ~ ' ' ~ (s.destination or '') )|lower }}"
+                 data-active="{{ '1' if is_active else '0' }}"
+                 data-delivered="{{ '1' if is_del else '0' }}"
+                 data-hold="{{ '1' if is_hold else '0' }}"
+                 data-delayed="{{ '1' if is_delay else '0' }}"
+                 data-fees="{{ '1' if fee_pending else '0' }}"
+            >
+              <div class="left">
+                <div class="tid">{{ s.tracking_id }} — {{ s.status }}</div>
+                <div class="small"><b>From:</b> {{ s.origin }} &nbsp;•&nbsp; <b>To:</b> {{ s.destination }}</div>
+                {% if s.estimated_delivery %}
+                  <div class="small"><b>Estimated delivery:</b> {{ s.estimated_delivery }}</div>
+                {% endif %}
+
+                {% if is_del %}
+                  <div class="pill pill-good">Delivered</div>
+                {% elif is_hold %}
+                  <div class="pill pill-warn">On Hold</div>
+                {% elif is_delay %}
+                  <div class="pill pill-bad">Delayed</div>
+                {% else %}
+                  <div class="pill">Active</div>
+                {% endif %}
+
+                {% if fee_pending %}
+                  <div class="pill pill-warn" style="margin-left:8px;">Fees pending</div>
+                {% endif %}
+              </div>
+
+              <div class="right">
+                <a class="btn" href="/track?tracking_id={{ s.tracking_id }}">Open tracking →</a>
+                <div class="muted" style="font-size:12px;text-align:right;">
+                  {% if fee_pending %}
+                    Payment action available in tracking
+                  {% else %}
+                    No payment required
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">
+          <div class="big">No shipments assigned yet</div>
+          <div class="muted">When an admin assigns shipments to your email, they will appear here.</div>
+          <div style="margin-top:12px;">
+            <a class="btn" style="display:inline-block; width:auto;" href="/">Track a shipment →</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <script>
+    // Stats + Search/Filter (frontend only)
+    const list = document.getElementById("list");
+    const q = document.getElementById("q");
+    const filter = document.getElementById("filter");
+
+    function computeStats(){
+      if (!list) return;
+
+      const items = [...list.querySelectorAll(".item")];
+      const total = items.length;
+      const active = items.filter(i => i.dataset.active === "1").length;
+      const delivered = items.filter(i => i.dataset.delivered === "1").length;
+      const fees = items.filter(i => i.dataset.fees === "1").length;
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statActive").textContent = active;
+      document.getElementById("statDelivered").textContent = delivered;
+      document.getElementById("statFees").textContent = fees;
+    }
+
+    function applyFilters(){
+      if (!list) return;
+
+      const term = (q.value || "").trim().toLowerCase();
+      const f = filter.value;
+
+      const items = [...list.querySelectorAll(".item")];
+      items.forEach(item => {
+        const hay = item.dataset.search || "";
+        const matchText = !term || hay.includes(term);
+
+        let matchFilter = true;
+        if (f === "active") matchFilter = item.dataset.active === "1";
+        if (f === "delivered") matchFilter = item.dataset.delivered === "1";
+        if (f === "hold") matchFilter = item.dataset.hold === "1";
+        if (f === "delayed") matchFilter = item.dataset.delayed === "1";
+
+        item.style.display = (matchText && matchFilter) ? "" : "none";
+      });
+    }
+
+    computeStats();
+    applyFilters();
+
+    if (q) q.addEventListener("input", applyFilters);
+    if (filter) filter.addEventListener("change", applyFilters);
+  </script>
+
+{% include "_footer.html" %}
+{% if chat_unread_count and chat_latest_tracking_id %}
+  <a href="/payment_chat/{{ chat_latest_tracking_id }}" style="
+    position:fixed; right:16px; bottom:16px; z-index:9999;
+    background:#003366; color:white; text-decoration:none;
+    padding:12px 14px; border-radius:999px; font-weight:900;
+    box-shadow:0 10px 24px rgba(11,18,32,.18);
+    ">
+    New message ({{ chat_unread_count }}) • Tap to open chat
+  </a>
+{% endif %}
+
+</body>
+</html>

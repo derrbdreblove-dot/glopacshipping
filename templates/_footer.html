@@ -1,0 +1,55 @@
+<footer style="background:#0b1220;color:#cbd5e1;padding:28px 18px;border-top:1px solid rgba(255,255,255,.06);margin-top:30px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;">
+    
+    <div>
+      <div style="font-weight:900;font-size:16px;margin-bottom:8px;color:#fff;">
+        Glopac Shipping Express
+      </div>
+      <div style="color:#93a4bb;font-size:13px;line-height:1.6;max-width:52ch;">
+        International shipping with tracking, customs support, and clear delivery updates.
+      </div>
+      <div style="margin-top:10px;color:#93a4bb;font-size:13px;">
+        <span id="y"></span> © Glopac Shipping Express. All rights reserved.
+      </div>
+    </div>
+
+    <div>
+      <div style="font-weight:900;color:#fff;margin-bottom:8px;">Company</div>
+      <div style="display:grid;gap:8px;font-size:13px;">
+        <a href="/about" style="color:#cbd5e1;text-decoration:none;">About</a>
+        <a href="/locations" style="color:#cbd5e1;text-decoration:none;">Locations</a>
+        <a href="/services" style="color:#cbd5e1;text-decoration:none;">Services</a>
+        <a href="/quote" style="color:#cbd5e1;text-decoration:none;">Get a Quote</a>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-weight:900;color:#fff;margin-bottom:8px;">Help</div>
+      <div style="display:grid;gap:8px;font-size:13px;">
+        <a href="/support" style="color:#cbd5e1;text-decoration:none;">Support</a>
+        <a href="/claims" style="color:#cbd5e1;text-decoration:none;">Claims</a>
+        <a href="/contact" style="color:#cbd5e1;text-decoration:none;">Contact</a>
+        {% if user %}
+          <a href="/my_shipments" style="color:#cbd5e1;text-decoration:none;">My Shipments</a>
+        {% else %}
+          <a href="/login" style="color:#cbd5e1;text-decoration:none;">Login</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <div style="font-weight:900;color:#fff;margin-bottom:8px;">Legal</div>
+      <div style="display:grid;gap:8px;font-size:13px;">
+        <a href="/policies" style="color:#cbd5e1;text-decoration:none;">Policies</a>
+        <a href="/terms" style="color:#cbd5e1;text-decoration:none;">Terms</a>
+        <a href="/privacy" style="color:#cbd5e1;text-decoration:none;">Privacy</a>
+        <a href="/prohibited-items" style="color:#cbd5e1;text-decoration:none;">Prohibited Items</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</footer>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glopac Shipping Express | Payment Chat - {{ tracking_id }}</title>
+  <style>
+    :root{--brand:#003366;--brand2:#002244;--bg:#f4f7fa;--card:#fff;--line:#e6eaf0;--muted:#5a667a;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);}
+    .topbar{background:var(--brand2);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;font-size:14px;}
+    .topbar a{color:#fff;text-decoration:none;font-weight:900;opacity:.95;margin-left:14px;}
+    .topbar a:hover{opacity:1;text-decoration:underline;}
+    .wrap{max-width:900px;margin:18px auto;padding:0 14px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(11,18,32,.06);overflow:hidden;}
+    .head{padding:14px 16px;border-bottom:1px solid var(--line);}
+    .head h1{margin:0;color:var(--brand);font-size:18px;}
+    .head .sub{margin-top:6px;color:var(--muted);font-size:13px;}
+    .msgs{padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-height:62vh;overflow:auto;background:#fbfcfe;}
+    .msg{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;max-width:85%;}
+    .meta{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:800}
+    .text{color:#0b1220;font-size:14px;line-height:1.45;white-space:pre-wrap;}
+    .system{border-color:#cfead9;background:#eaf7ef;}
+    .system .text{color:#0f5d2d;}
+    .admin{border-color:#d7e3f7;background:#eef3fb;align-self:flex-start;}
+    .admin .text{color:#003366;}
+    .user{align-self:flex-end;}
+    .user .text{color:#0b1220;}
+    form{display:flex;gap:10px;padding:14px 16px;border-top:1px solid var(--line);background:#fff;}
+    input{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);outline:none;font-size:14px;}
+    input:focus{border-color:var(--brand);}
+    button{padding:12px 14px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer;}
+    button:hover{background:var(--brand2);}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>Glopac Shipping Express • Payment Chat</div>
+    <div>
+      <a href="/track?tracking_id={{ tracking_id }}">Tracking</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1>Payment Chat</h1>
+        <div class="sub">Tracking ID: <b>{{ tracking_id }}</b> • Send your 8-character code here to proceed.</div>
+      </div>
+
+      <div class="msgs" id="msgs">
+        {% for m in messages %}
+          <div class="msg {% if m.sender=='system' %}system{% elif m.sender=='admin' %}admin{% else %}user{% endif %}">
+            <div class="meta">
+              {% if m.sender=='system' %}System{% elif m.sender=='admin' %}Admin{% else %}You{% endif %}
+              • {{ m.time }}
+            </div>
+            <div class="text">{{ m.text }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <form method="post">
+        <input name="message" placeholder="Type your message or paste the code here…" required />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const box = document.getElementById("msgs");
+    if (box) box.scrollTop = box.scrollHeight;
+  </script>
+</body>
+</html>

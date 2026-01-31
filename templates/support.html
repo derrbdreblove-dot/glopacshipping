@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glopac Shipping Express | Support</title>
+  <style>
+    :root{--brand:#003366;--brand2:#002244;--bg:#f4f7fa;--card:#fff;--line:#e6eaf0;--muted:#5a667a;--good:#1f8f4e;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#0b1220;}
+    a{color:var(--brand);text-decoration:none;font-weight:800}
+    a:hover{text-decoration:underline}
+    header{background:var(--card);border-bottom:1px solid var(--line);}
+    .header{max-width:1100px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:44px}
+    .brand .name{font-weight:900;color:var(--brand)}
+    .brand .tag{font-size:12px;color:var(--muted);font-weight:700}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(11,18,32,.06)}
+    h1{margin:0 0 8px;color:var(--brand)}
+    h2{margin:0 0 10px;color:var(--brand);font-size:18px}
+    .muted{color:var(--muted);line-height:1.55}
+    .pill{display:inline-block;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#f8fafc;color:var(--muted);font-weight:900;font-size:12px;margin:6px 8px 0 0}
+    .btn{display:inline-block;padding:12px 14px;border-radius:10px;background:var(--good);color:#fff;font-weight:900;margin-top:10px}
+    .btn:hover{filter:brightness(.95);text-decoration:none}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header">
+    <div class="brand">
+      <img src="/static/img/glopacshippingexpress-logo.jpg" alt="Glopac Shipping Express">
+      <div>
+        <div class="name">Glopac Shipping Express</div>
+        <div class="tag">Support Center</div>
+      </div>
+    </div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/policies" style="margin-left:14px;">Policies</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card" style="margin-bottom:14px;">
+    <h1>Support</h1>
+    <p class="muted">Quick help for tracking, holds, deliveries, and claims.</p>
+    <span class="pill">Tracking Help</span>
+    <span class="pill">Customs Holds</span>
+    <span class="pill">Delivery Changes</span>
+    <span class="pill">Claims</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Tracking Help</h2>
+      <p class="muted">
+        Enter your tracking number on the home page to view timeline updates and route map.
+      </p>
+      <p class="muted">
+        If your status shows <b>“held for customs fees”</b>, log in to your account to view fee details
+        and take action (only the shipment owner can see the fee amount).
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Delivery Changes</h2>
+      <p class="muted">
+        Need to update delivery instructions or request a hold? Contact support and include:
+      </p>
+      <ul>
+        <li>Tracking ID</li>
+        <li>Destination address/city</li>
+        <li>What change you need</li>
+      </ul>
+      <a class="btn" href="/claims">File a claim / request →</a>
+    </div>
+
+    <div class="card">
+      <h2>Customs Holds</h2>
+      <p class="muted">
+        Some destinations require duties or taxes. When required, the shipment may be placed on hold
+        until payment is submitted and verified.
+      </p>
+      <p class="muted">
+        Only the shipment owner account can submit payment.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Contact</h2>
+      <p class="muted">
+        Add your support email/phone here later.
+      </p>
+      <p class="muted"><b>Email:</b> support@glopacshippingexpress.com</p>
+      <p class="muted"><b>Hours:</b> Mon–Sat, 9am–6pm</p>
+    </div>
+  </div>
+
+  <a href="/support_chat" style="
+    display:inline-block;
+    margin-top:12px;
+    background:#003366;
+    color:white;
+    text-decoration:none;
+    padding:12px 14px;
+    border-radius:12px;
+    font-weight:900;
+  ">
+    Message Support{% if chat_unread_count and chat_unread_count > 0 %} ({{ chat_unread_count }}){% endif %}
+  </a>
+
+</div>
+
+</body>
+</html>

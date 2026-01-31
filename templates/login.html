@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Glopac Shipping Express</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --card:#ffffff;
+      --line:#e6eaf0;
+      --muted:#5a667a;
+      --good:#1f8f4e;
+      --danger:#b00020;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:var(--bg);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .card{
+      width:100%;
+      max-width:420px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:22px;
+      box-shadow:0 12px 28px rgba(11,18,32,.12);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:center;
+      margin-bottom:14px;
+    }
+    .brand img{
+      height:42px;
+      width:auto;
+    }
+    .brand .name{
+      font-weight:900;
+      color:var(--brand);
+      font-size:18px;
+      line-height:1.1;
+    }
+    .brand .tag{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    h1{
+      text-align:center;
+      margin:10px 0 4px;
+      color:#0b1220;
+      font-size:22px;
+    }
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:18px;
+    }
+    label{
+      display:block;
+      font-weight:800;
+      margin-bottom:6px;
+      font-size:13px;
+      color:#1b2a44;
+    }
+    input{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      font-size:14px;
+      margin-bottom:14px;
+      outline:none;
+    }
+    input:focus{
+      border-color:var(--brand);
+    }
+    .btn{
+      width:100%;
+      padding:14px;
+      border:0;
+      border-radius:12px;
+      background:var(--good);
+      color:#fff;
+      font-weight:900;
+      font-size:15px;
+      cursor:pointer;
+    }
+    .btn:hover{filter:brightness(.95)}
+    .err{
+      background:#fdecea;
+      color:var(--danger);
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      margin-bottom:14px;
+      border:1px solid #f5c2c7;
+    }
+    .links{
+      text-align:center;
+      margin-top:14px;
+      font-size:13px;
+    }
+    .links a{
+      color:var(--brand);
+      font-weight:800;
+      text-decoration:none;
+    }
+    .links a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="brand">
+      <img src="/static/img/glopacshippingexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+      <div>
+        <div class="name">Glopac Shipping Express</div>
+        <div class="tag">Secure account login</div>
+      </div>
+    </div>
+
+    <h1>Welcome back</h1>
+    <div class="sub">Log in to access your shipments and payments</div>
+
+    {% if error %}
+      <div class="err">{{ error }}</div>
+    {% endif %}
+
+    <!-- ✅ FIX: preserve ?next=... so after login you return to chat/support -->
+    <form method="post" action="{{ url_for('login', next=request.args.get('next')) }}">
+      <input type="hidden" name="next" value="{{ request.args.get('next','') }}">
+
+      <label>Email</label>
+      <input type="email" name="email" placeholder="you@example.com" required>
+
+      <label>Password</label>
+      <input type="password" name="password" placeholder="••••••••" required>
+
+      <button class="btn" type="submit">Log in</button>
+    </form>
+
+    <div class="links">
+      <p><a href="/signup">Create an account</a></p>
+      <p><a href="/">← Back to home</a></p>
+    </div>
+  </div>
+
+</body>
+</html>

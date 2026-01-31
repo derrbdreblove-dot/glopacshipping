@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Glopac Shipping Express | Tracking {{ tracking_id }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+  <style>
+    :root{
+      --brand:#003366;
+      --brand2:#002244;
+      --bg:#f4f7fa;
+      --line:#e6eaf0;
+      --muted:#5a667a;
+      --card:#fff;
+
+      --warn:#b36b00;
+      --good:#1f8f4e;
+
+      /* Progress colors you asked for */
+      --activeInk:#0b1220;   /* current progress = black */
+      --doneBg:#eaf7ef;      /* done = green */
+      --doneBorder:#cfead9;
+      --doneText:#1f8f4e;
+
+      --activeBg:#0b1220;    /* active pill fill black */
+      --activeBorder:#0b1220;
+      --activeText:#ffffff;
+
+      --shadow: 0 14px 34px rgba(11,18,32,.10);
+    }
+
+    *{box-sizing:border-box}
+    body { font-family: Arial, sans-serif; background: var(--bg); padding: 18px; margin:0; color:#0b1220; }
+
+    .top {
+      max-width:1200px;margin:0 auto 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 12px;
+    }
+    .brand { display:flex;align-items:center;gap:10px; }
+    .brand img{ height:44px; width:auto; }
+    .brand .name{ font-weight:900;color:var(--brand); letter-spacing:.2px; }
+    .brand .tag{ font-size:12px;color:var(--muted);font-weight:700; margin-top:2px; }
+    .nav a{ margin-left:14px; color:var(--brand); font-weight:800; text-decoration:none; }
+    .nav a:hover{ text-decoration:underline; }
+
+    .container {
+      max-width: 1200px; margin: auto;
+      background: var(--card);
+      padding: 18px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      border:1px solid var(--line);
+    }
+
+    .herohead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:12px;
+    }
+
+    h1 { color: var(--brand); margin:0 0 6px; font-size:22px; letter-spacing:.2px; }
+    .status {
+      font-size: 16px;
+      font-weight:900;
+      margin: 8px 0 0;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      color:var(--muted);
+    }
+    .badge-status{
+      background:#fff3cd;
+      border-color:#ffe69c;
+      color:#8a5a00;
+    }
+    .badge-track{
+      background:#eef3fb;
+      border-color:#d7e3f7;
+      color:var(--brand);
+    }
+
+    .sub { color: var(--muted); margin: 6px 0 0; font-size:13px; }
+
+    .grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-top:14px; }
+    .box {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fff;
+      box-shadow:0 8px 18px rgba(11,18,32,.05);
+    }
+    .k { color:var(--muted); font-size:12px; font-weight:900; margin-bottom:6px; letter-spacing:.5px; }
+    .v { font-weight:900; font-size:14px; line-height:1.35; }
+
+    /* Progress */
+    .progress { margin:16px 0 8px; padding:14px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .progress-head{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .progress-head .title{
+      font-weight:900; color:var(--brand); letter-spacing:.3px;
+    }
+    .progress-head .hint{
+      font-size:12px; color:var(--muted); font-weight:700;
+    }
+
+    .steps {
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:10px;
+      align-items:stretch;
+    }
+
+    .step{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 10px 12px;
+      text-align:center;
+      font-weight:900;
+      font-size:12px;
+      color:var(--muted);
+      background:#f8fafc;
+      overflow:hidden;
+      box-shadow:0 6px 14px rgba(11,18,32,.05);
+    }
+
+    /* A little “lively” highlight bar */
+    .step::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height:4px;
+      background:transparent;
+    }
+
+    /* DONE = green (as requested) */
+    .step.done{
+      background:var(--doneBg);
+      border-color:var(--doneBorder);
+      color:var(--doneText);
+    }
+    .step.done::before{ background: var(--doneText); }
+
+    /* CURRENT/ACTIVE = black (as requested) */
+    .step.active{
+      background:var(--activeBg);
+      border-color:var(--activeBorder);
+      color:var(--activeText);
+    }
+    .step.active::before{ background:#ffffff; opacity:.9; }
+
+    /* Add subtle connector line under steps for desktop */
+    .steps-wrap{ position:relative; }
+    .steps-wrap:after{
+      content:"";
+      position:absolute;
+      left:10px; right:10px;
+      top:50%;
+      height:2px;
+      background:rgba(11,18,32,.08);
+      z-index:0;
+      transform:translateY(-50%);
+      border-radius:999px;
+    }
+    .steps > .step{ z-index:1; }
+
+    #map { height: 420px; margin: 16px 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 10px 24px rgba(11,18,32,.06); }
+
+    .timeline { margin: 18px 0; }
+    .timeline h2{ margin:0 0 10px;color:var(--brand); }
+
+    .event {
+      border-left: 4px solid var(--brand);
+      padding: 12px 12px;
+      margin: 10px 0;
+      background: #f9fafb;
+      border-radius:12px;
+      border:1px solid var(--line);
+    }
+    .event .d{ font-weight:900; }
+    .event .m{ color:var(--muted); margin-top:6px; line-height:1.35; }
+
+    .fees { background: #fff3cd; padding: 16px; border-radius: 14px; margin: 14px 0; border:1px solid #ffe69c; }
+    .pay-btn {
+      display: inline-block; background: var(--good); color: white; padding: 12px 22px;
+      text-decoration: none; border-radius: 12px; font-weight: 900;
+      box-shadow:0 10px 22px rgba(31,143,78,.18);
+    }
+    .pay-btn:hover { filter:brightness(.95); }
+
+    .footer-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; }
+    .footer-links a{ color:var(--brand); font-weight:900; text-decoration:none; }
+    .footer-links a:hover{ text-decoration:underline; }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns:1fr; }
+      .steps{ grid-template-columns:1fr; }
+      .steps-wrap:after{ display:none; }
+      .nav{ display:none; }
+      #map{ height:360px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div class="brand">
+      <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express Logo">
+      <div>
+        <div class="name">Glopac Shipping Express</div>
+        <div class="tag">Track • Ship • Deliver</div>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/">Home</a>
+      <a href="/support">Support</a>
+      <a href="/policies">Policies</a>
+      {% if user %}
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="herohead">
+      <div>
+        <h1>Tracking</h1>
+        <div class="status">
+          <span class="badge badge-track">Tracking ID: {{ tracking_id }}</span>
+          <span class="badge badge-status">Status: {{ status }}</span>
+        </div>
+
+        {% if estimated_delivery %}
+          <div class="sub">Estimated Delivery: <b>{{ estimated_delivery }}</b></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <div class="k">ORIGIN</div>
+        <div class="v">{{ origin }}</div>
+      </div>
+      <div class="box">
+        <div class="k">DESTINATION</div>
+        <div class="v">{{ destination }}</div>
+      </div>
+      <div class="box">
+        <div class="k">PACKAGE</div>
+        <div class="v">{{ package_details }}</div>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-head">
+        <div class="title">Shipment progress</div>
+        <div class="hint">Updates refresh as new scans are added</div>
+      </div>
+
+      {% set s = status|lower %}
+      {% set is_delivered = 'delivered' in s %}
+      {% set is_out = 'out for delivery' in s %}
+      {% set is_hold = 'hold' in s or 'pending verification' in s %}
+      {% set is_transit = 'transit' in s %}
+      {% set is_picked = ('picked up' in s) or is_transit or is_hold or is_out or is_delivered %}
+
+      <div class="steps-wrap">
+        <div class="steps">
+          <div class="step done">Created</div>
+
+          <div class="step {{ 'done' if is_picked else 'active' }}">
+            Picked Up
+          </div>
+
+          <div class="step {{ 'done' if is_out or is_delivered else ('active' if is_transit or is_hold else '') }}">
+            In Transit
+          </div>
+
+          <div class="step {{ 'active' if is_out else ('done' if is_delivered else '') }}">
+            Out for Delivery
+          </div>
+
+          <div class="step {{ 'done' if is_delivered else '' }}">
+            Delivered
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="timeline">
+      <h2>Shipment History</h2>
+      {% for event in events %}
+        <div class="event">
+          <div class="d">{{ event.date }} — {{ event.location }}</div>
+          <div class="m">{{ event.description }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if fees and (fees.exists or (fees.amount is defined)) and (not fees.paid) %}
+      <div class="fees">
+        <h3 style="margin:0 0 8px; color:#6b4a00;">Customs & Taxes</h3>
+
+        {% if is_owner or is_admin %}
+          <p style="margin:6px 0;"><b>Amount:</b> ${{ fees.amount }}</p>
+          <p style="margin:6px 0;"><b>Reason:</b> {{ fees.reason }}</p>
+
+          {% if fees.payment_submitted %}
+            <p style="margin:6px 0;"><b>Status:</b> Payment Submitted — Pending Verification</p>
+            <p style="margin:6px 0;">Your payment is being verified. Once confirmed, the shipment will be released.</p>
+          {% else %}
+            <p style="margin:6px 0;">Your shipment is on hold until payment is submitted.</p>
+            <a href="/pay/{{ tracking_id }}" class="pay-btn">Submit Payment</a>
+          {% endif %}
+
+        {% else %}
+          <p style="margin:6px 0;">
+            Package held for customs fees — <a href="/login" style="font-weight:900;">log in</a> to continue and take further action.
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="footer-links">
+      <a href="/">Track Another</a>
+      <a href="/support">Need Help?</a>
+    </div>
+  </div>
+
+  <script>
+    var map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    var route = {{ route | tojson | safe }};
+    if (route && route.length > 0) {
+      var polyline = L.polyline(route.map(p => [p.lat, p.lng])).addTo(map);
+      map.fitBounds(polyline.getBounds());
+      route.forEach(p => L.marker([p.lat, p.lng]).addTo(map).bindPopup(p.label || 'Route Point'));
+    }
+
+    {% if current_location %}
+      var curr = {{ current_location | tojson | safe }};
+      if (curr && curr.lat && curr.lng) {
+        L.marker([curr.lat, curr.lng]).addTo(map).bindPopup('Current Location');
+      }
+    {% endif %}
+  </script>
+
+  {% include "_footer.html" %}
+
+  {% if chat_unread_count and chat_latest_tracking_id %}
+    <a href="/payment_chat/{{ chat_latest_tracking_id }}" style="
+      position:fixed; right:16px; bottom:16px; z-index:9999;
+      background:#003366; color:white; text-decoration:none;
+      padding:12px 14px; border-radius:999px; font-weight:900;
+      box-shadow:0 10px 24px rgba(11,18,32,.18);
+    ">
+      New message ({{ chat_unread_count }}) • Tap to open chat
+    </a>
+  {% endif %}
+
+</body>
+</html>

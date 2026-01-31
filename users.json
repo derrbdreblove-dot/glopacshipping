@@ -1,0 +1,108 @@
+{
+  "admin@glopacshippingexpress.com": {
+    "email": "admin@glopacshippingexpress.com",
+    "name": "Glopac Shipping Express Admin",
+    "password": "admin123",
+    "role": "admin",
+    "active": true
+  },
+  "alex.owner@glopacshippingexpress.com": {
+    "email": "alex.owner@glopacshippingexpress.com",
+    "name": "Alex Carter",
+    "password": "alex123",
+    "role": "user",
+    "active": true
+  },
+  "mina.owner@glopacshippingexpress.com": {
+    "email": "mina.owner@glopacshippingexpress.com",
+    "name": "Mina Tanaka",
+    "password": "mina123",
+    "role": "user",
+    "active": true
+  },
+  "kwame.owner@glopacshippingexpress.com": {
+    "email": "kwame.owner@glopacshippingexpress.com",
+    "name": "Kwame Mensah",
+    "password": "kwame123",
+    "role": "user",
+    "active": true
+  },
+  "hans.owner@glopacshippingexpress.com": {
+    "email": "hans.owner@glopacshippingexpress.com",
+    "name": "Hans Keller",
+    "password": "hans123",
+    "role": "user",
+    "active": true
+  },
+  "lucas.owner@glopacshippingexpress.com": {
+    "email": "lucas.owner@glopacshippingexpress.com",
+    "name": "Lucas Rivera",
+    "password": "lucas123",
+    "role": "user",
+    "active": true
+  },
+  "amina.owner@glopacshippingexpress.com": {
+    "email": "amina.owner@glopacshippingexpress.com",
+    "name": "Amina Diallo",
+    "password": "amina123",
+    "role": "user",
+    "active": true
+  },
+  "chidi.owner@glopacshippingexpress.com": {
+    "email": "chidi.owner@glopacshippingexpress.com",
+    "name": "Chidi Okafor",
+    "password": "chidi123",
+    "role": "user",
+    "active": true
+  },
+  "sophia.owner@glopacshippingexpress.com": {
+    "email": "sophia.owner@glopacshippingexpress.com",
+    "name": "Sophia Müller",
+    "password": "sophia123",
+    "role": "user",
+    "active": true
+  },
+  "kofi.owner@glopacshippingexpress.com": {
+    "email": "kofi.owner@glopacshippingexpress.com",
+    "name": "Kofi Boateng",
+    "password": "kofi123",
+    "role": "user",
+    "active": true
+  },
+  "maria.owner@glopacshippingexpress.com": {
+    "email": "maria.owner@glopacshippingexpress.com",
+    "name": "Maria Silva",
+    "password": "maria123",
+    "role": "user",
+    "active": true
+  },
+  "jason.owner@glopacshippingexpress.com": {
+    "email": "jason.owner@glopacshippingexpress.com",
+    "name": "Jason Brown",
+    "password": "jason123",
+    "role": "user",
+    "active": true
+  },
+  "hana.owner@glopacshippingexpress.com": {
+    "email": "hana.owner@glopacshippingexpress.com",
+    "name": "Hana Kim",
+    "password": "hana123",
+    "role": "user",
+    "active": true
+  },
+  "noah.owner@glopacshippingexpress.com": {
+    "email": "noah.owner@glopacshippingexpress.com",
+    "name": "Noah Njoroge",
+    "password": "noah123",
+    "role": "user",
+    "active": true
+  },
+  "tra@gmail.com": {
+    "email": "tra@gmail.com",
+    "name": "derrbdreb love",
+    "password": "tra123",
+    "role": "user",
+    "active": true,
+    "created_at": "2026-01-29 15:03"
+  }
+}
