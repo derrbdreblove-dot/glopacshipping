@@ -13,6 +13,7 @@
       --muted:#5a667a;
       --line:#e6eaf0;
       --good:#1f8f4e;
+      --danger:#b00020;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:#0b1220;}
@@ -91,6 +92,16 @@
       font-weight:800;
       line-height:1.4;
     }
+    .err{
+      margin-top:14px;
+      border:1px solid #f5c2c7;
+      background:#fdecea;
+      color:var(--danger);
+      padding:12px;
+      border-radius:12px;
+      font-weight:800;
+      line-height:1.4;
+    }
     .note{
       background:#eef3fb;
       border:1px solid #d7e3f7;
@@ -112,7 +123,7 @@
 <body>
 
   <div class="topbar">
-    <div>Glopac Shipping Express • Instant Estimate</div>
+    <div>Glopac Shipping Express • Quote Request</div>
     <div class="links">
       <a href="/policies">Policies</a>
       <a href="/support">Support</a>
@@ -152,25 +163,35 @@
       <div class="card">
         <h1>Get a Quote</h1>
         <p class="muted">
-          This is a simple on-page quote estimator (no backend required). Enter details to get a quick range.
+          Fill the form and we’ll send your estimate to your email.
         </p>
 
-        <form id="quoteForm" onsubmit="return false;">
+        {% if success %}
+          <div class="result">{{ success }}</div>
+        {% endif %}
+        {% if error %}
+          <div class="err">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/quote">
+          <label>Email</label>
+          <input name="email" type="email" placeholder="you@example.com" required>
+
           <div class="row">
             <div>
               <label>From (City/Country)</label>
-              <input id="from" placeholder="e.g. Accra, Ghana" required>
+              <input name="from" placeholder="e.g. New York, USA" required>
             </div>
             <div>
               <label>To (City/Country)</label>
-              <input id="to" placeholder="e.g. London, UK" required>
+              <input name="to" placeholder="e.g. London, UK" required>
             </div>
           </div>
 
           <div class="row">
             <div>
               <label>Shipment Type</label>
-              <select id="type" required>
+              <select name="type" required>
                 <option value="">Select…</option>
                 <option value="documents">Documents</option>
                 <option value="parcel">Parcel</option>
@@ -179,7 +200,7 @@
             </div>
             <div>
               <label>Service Speed</label>
-              <select id="speed" required>
+              <select name="speed" required>
                 <option value="">Select…</option>
                 <option value="express">Express</option>
                 <option value="standard">Standard</option>
@@ -191,23 +212,21 @@
           <div class="row">
             <div>
               <label>Weight (kg)</label>
-              <input id="weight" type="number" step="0.01" placeholder="e.g. 2.50" required>
+              <input name="weight" type="number" step="0.01" placeholder="e.g. 2.50" required>
             </div>
             <div>
               <label>Declared Value (USD)</label>
-              <input id="value" type="number" step="0.01" placeholder="e.g. 150.00">
+              <input name="value" type="number" step="0.01" placeholder="e.g. 150.00">
             </div>
           </div>
 
           <label>Notes (optional)</label>
-          <input id="notes" placeholder="Fragile, electronics, time sensitive…">
+          <input name="notes" placeholder="Fragile, electronics, time sensitive…">
 
-          <button class="btn" type="button" onclick="calcQuote()">Calculate Quote</button>
-
-          <div id="result" class="result" style="display:none;"></div>
+          <button class="btn" type="submit">Get Quote</button>
 
           <div class="note">
-            This is an estimate. Final price depends on dimensions, destination rules, customs, and pickup requirements.
+            This is a request. Final price depends on dimensions, destination rules, customs, and pickup requirements.
             For pickup scheduling, go to <a href="/ship"><b>Ship</b></a>.
           </div>
         </form>
@@ -228,54 +247,6 @@
     </div>
   </main>
 
-  <script>
-    function fmtMoney(n){
-      try{
-        return new Intl.NumberFormat(undefined, { style:'currency', currency:'USD' }).format(n);
-      }catch(e){
-        return '$' + (Math.round(n*100)/100).toFixed(2);
-      }
-    }
-
-    function calcQuote(){
-      const from = document.getElementById('from').value.trim();
-      const to = document.getElementById('to').value.trim();
-      const type = document.getElementById('type').value;
-      const speed = document.getElementById('speed').value;
-      const weight = parseFloat(document.getElementById('weight').value || '0');
-
-      if(!from || !to || !type || !speed || !(weight > 0)){
-        alert('Please fill From, To, Type, Speed, and Weight.');
-        return;
-      }
-
-      // Simple estimator logic (client-side only)
-      let base = 15; // starting fee
-      let perKg = 6;
-
-      if(type === 'documents'){ base = 12; perKg = 3; }
-      if(type === 'parcel'){ base = 18; perKg = 7; }
-      if(type === 'freight'){ base = 45; perKg = 12; }
-
-      let speedMult = 1.0;
-      if(speed === 'express') speedMult = 1.7;
-      if(speed === 'standard') speedMult = 1.2;
-      if(speed === 'economy') speedMult = 1.0;
-
-      const est = (base + (perKg * weight)) * speedMult;
-
-      // show a range
-      const low = est * 0.9;
-      const high = est * 1.15;
-
-      const res = document.getElementById('result');
-      res.style.display = 'block';
-      res.innerHTML =
-        'Estimated total: <b>' + fmtMoney(low) + ' – ' + fmtMoney(high) + '</b><br>' +
-        '<span style="font-weight:700;">Route:</span> ' + from + ' → ' + to + '<br>' +
-        '<span style="font-weight:700;">Service:</span> ' + speed.toUpperCase() + ' • ' + type.toUpperCase() + ' • ' + weight + 'kg';
-    }
-  </script>
-
 </body>
 </html>
+
