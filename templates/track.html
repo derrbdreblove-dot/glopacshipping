@@ -20,7 +20,7 @@
       --warn:#b36b00;
       --good:#1f8f4e;
 
-      /* Progress colors you asked for */
+      /* Progress colors */
       --activeInk:#0b1220;   /* current progress = black */
       --doneBg:#eaf7ef;      /* done = green */
       --doneBorder:#cfead9;
@@ -149,7 +149,6 @@
       box-shadow:0 6px 14px rgba(11,18,32,.05);
     }
 
-    /* A little “lively” highlight bar */
     .step::before{
       content:"";
       position:absolute;
@@ -158,7 +157,6 @@
       background:transparent;
     }
 
-    /* DONE = green (as requested) */
     .step.done{
       background:var(--doneBg);
       border-color:var(--doneBorder);
@@ -166,7 +164,6 @@
     }
     .step.done::before{ background: var(--doneText); }
 
-    /* CURRENT/ACTIVE = black (as requested) */
     .step.active{
       background:var(--activeBg);
       border-color:var(--activeBorder);
@@ -174,7 +171,6 @@
     }
     .step.active::before{ background:#ffffff; opacity:.9; }
 
-    /* Add subtle connector line under steps for desktop */
     .steps-wrap{ position:relative; }
     .steps-wrap:after{
       content:"";
@@ -191,20 +187,118 @@
 
     #map { height: 420px; margin: 16px 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 10px 24px rgba(11,18,32,.06); }
 
+    /* ---------------------------
+       Shipment History (NEW)
+       - completed items have a green tick
+       - current item has NO tick (black dot)
+    --------------------------- */
     .timeline { margin: 18px 0; }
     .timeline h2{ margin:0 0 10px;color:var(--brand); }
 
-    .event {
-      border-left: 4px solid var(--brand);
-      padding: 12px 12px;
-      margin: 10px 0;
-      background: #f9fafb;
-      border-radius:12px;
-      border:1px solid var(--line);
+    .history{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding: 4px 2px;
     }
-    .event .d{ font-weight:900; }
-    .event .m{ color:var(--muted); margin-top:6px; line-height:1.35; }
 
+    .event{
+      display:grid;
+      grid-template-columns: 32px 1fr;
+      gap:12px;
+      align-items:flex-start;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 8px 18px rgba(11,18,32,.05);
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .event::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:4px;
+      background: rgba(0,51,102,.20);
+    }
+
+    .icon{
+      width:28px; height:28px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      font-size:14px;
+      margin-top:2px;
+      border:2px solid var(--line);
+      color:var(--muted);
+      background:#f8fafc;
+      flex:0 0 auto;
+    }
+
+    /* Completed = green tick */
+    .icon.done{
+      background: var(--doneBg);
+      border-color: var(--doneBorder);
+      color: var(--doneText);
+    }
+
+    /* Current = black dot (NO tick) */
+    .icon.current{
+      background:#0b1220;
+      border-color:#0b1220;
+      color:#fff;
+      font-size:12px;
+    }
+
+    .event-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 10px;
+      align-items:center;
+      margin-bottom:6px;
+    }
+
+    .event-date{
+      font-weight:900;
+      color:#0b1220;
+    }
+
+    .event-pill{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      color:var(--muted);
+    }
+
+    .event-pill.current{
+      background:#0b1220;
+      border-color:#0b1220;
+      color:#fff;
+    }
+
+    .event-pill.done{
+      background: var(--doneBg);
+      border-color: var(--doneBorder);
+      color: var(--doneText);
+    }
+
+    .event-desc{
+      color: var(--muted);
+      line-height:1.45;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    /* Fees */
     .fees { background: #fff3cd; padding: 16px; border-radius: 14px; margin: 14px 0; border:1px solid #ffe69c; }
     .pay-btn {
       display: inline-block; background: var(--good); color: white; padding: 12px 22px;
@@ -223,6 +317,7 @@
       .steps-wrap:after{ display:none; }
       .nav{ display:none; }
       #map{ height:360px; }
+      .event{ grid-template-columns: 28px 1fr; }
     }
   </style>
 </head>
@@ -319,12 +414,42 @@
 
     <div class="timeline">
       <h2>Shipment History</h2>
-      {% for event in events %}
-        <div class="event">
-          <div class="d">{{ event.date }} — {{ event.location }}</div>
-          <div class="m">{{ event.description }}</div>
-        </div>
-      {% endfor %}
+
+      {# Determine which history item is the "current" one (the last item) #}
+      {% set last_index = (events|length) - 1 %}
+
+      <div class="history">
+        {% for event in events %}
+          {% set is_current = (loop.index0 == last_index) %}
+          {% set loc_raw = (event.location or '') %}
+          {# Replace "Admin Update" with "Shipment Update" for cleaner user-facing text #}
+          {% set loc = 'Shipment Update' if loc_raw|lower == 'admin update' else loc_raw %}
+
+          <div class="event">
+            <div class="icon {{ 'current' if is_current else 'done' }}">
+              {% if is_current %}
+                ●
+              {% else %}
+                ✓
+              {% endif %}
+            </div>
+
+            <div>
+              <div class="event-head">
+                <div class="event-date">{{ event.date }}</div>
+
+                <div class="event-pill {{ 'current' if is_current else 'done' }}">
+                  {{ 'Current update' if is_current else 'Completed' }}
+                </div>
+
+                <div class="event-pill">{{ loc }}</div>
+              </div>
+
+              <div class="event-desc">{{ event.description }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     </div>
 
     {% if fees and (fees.exists or (fees.amount is defined)) and (not fees.paid) %}
@@ -393,3 +518,4 @@
 
 </body>
 </html>
+
