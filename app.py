@@ -163,11 +163,12 @@ def apply_fees_logic(shipment: dict, status: str, fees_amount_raw, fees_reason_r
         shipment["fees"] = fees
 
 
+# ✅ CHANGED "Admin Update" -> "Shipment Update"
 def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str):
     if (old_status or "") != (new_status or ""):
         shipment.setdefault("events", []).append({
             "date": now_str(),
-            "location": "Admin Update",
+            "location": "Shipment Update",
             "description": f"Status updated: {old_status or 'N/A'} → {new_status}"
         })
 
@@ -249,6 +250,7 @@ def ensure_auto_history(shipment: dict) -> bool:
     return changed
 
 
+# ✅ CHANGED "Admin Update" -> "Shipment Update"
 def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_est: str) -> bool:
     old_est = (old_est or "").strip()
     new_est = (new_est or "").strip()
@@ -258,9 +260,9 @@ def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_es
 
     key = f"estimated_delivery:{new_est or 'cleared'}"
     if new_est:
-        return add_auto_event_once(shipment, key, "Admin Update", f"Estimated delivery set: {new_est}")
+        return add_auto_event_once(shipment, key, "Shipment Update", f"Estimated delivery set: {new_est}")
     else:
-        return add_auto_event_once(shipment, key, "Admin Update", "Estimated delivery cleared")
+        return add_auto_event_once(shipment, key, "Shipment Update", "Estimated delivery cleared")
 
 
 # -----------------------
@@ -564,7 +566,7 @@ def ship():
 
 
 # -----------------------
-# ✅ Support Chat launcher (THIS FIXES /support_chat NOT FOUND)
+# ✅ Support Chat launcher (fixes /support_chat not found)
 # -----------------------
 @app.route("/support_chat")
 def support_chat():
@@ -577,7 +579,6 @@ def support_chat():
 
     shipments = load_json(SHIPMENTS_FILE, {})
 
-    # find newest shipment for this user (by last event time)
     latest_tid = None
     latest_time = ""
 
@@ -588,7 +589,6 @@ def support_chat():
         if owner != viewer_email:
             continue
 
-        # try use last event date as "most recent"
         evs = s.get("events") or []
         t = ""
         if isinstance(evs, list) and evs:
@@ -809,7 +809,6 @@ def initiate_payment(tracking_id):
 
     chat_ensure_thread(tracking_id, owner_email)
 
-    # ✅ your auto-message (you can change the wording here anytime)
     chat_add_message(
         tracking_id,
         "system",
@@ -1218,7 +1217,7 @@ def verify_payment(tracking_id):
 
         shipment.setdefault("events", []).append({
             "date": now_str(),
-            "location": "Admin Verification",
+            "location": "Shipment Update",
             "description": "Payment Verified - Shipment Released"
         })
 
@@ -1238,41 +1237,63 @@ def verify_payment(tracking_id):
 def contact():
     return render_template("contact.html", user=current_user())
 
+
 @app.route("/claims")
 def claims():
     return render_template("claims.html", user=current_user())
+
 
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html", user=current_user())
 
+
 @app.route("/prohibited-items")
 def prohibited_items():
     return render_template("prohibited_items.html", user=current_user())
+
 
 @app.route("/prohibited_items")
 def prohibited_items_alias():
     return redirect(url_for("prohibited_items"))
 
-@app.route("/quote")
+
+# ✅ UPDATED: quote supports GET + POST (email -> success message)
+@app.route("/quote", methods=["GET", "POST"])
 def quote():
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip()
+        if not email:
+            return render_template("quote.html", user=current_user(), error="Email is required."), 400
+
+        return render_template(
+            "quote.html",
+            user=current_user(),
+            success="✅ Total estimate will be sent to your email shortly."
+        )
+
     return render_template("quote.html", user=current_user())
+
 
 @app.route("/services")
 def services():
     return render_template("services.html", user=current_user())
 
+
 @app.route("/locations")
 def locations():
     return render_template("locations.html", user=current_user())
+
 
 @app.route("/policies")
 def policies():
     return render_template("policies.html", user=current_user())
 
+
 @app.route("/support")
 def support():
     return render_template("support.html", user=current_user())
+
 
 @app.route("/terms")
 def terms():
@@ -1281,3 +1302,4 @@ def terms():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
