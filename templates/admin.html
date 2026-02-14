@@ -363,10 +363,18 @@
                         <select name="status" required>
                           {% set st = ship.status or "" %}
                           <option value="{{ st }}">{{ st if st else "Choose…" }}</option>
+
                           <option value="Label Created">Label Created</option>
                           <option value="Picked Up">Picked Up</option>
                           <option value="In Transit">In Transit</option>
                           <option value="Arrived at Destination Country">Arrived at Destination Country</option>
+
+                          <!-- ✅ ADDED (as requested) -->
+                          <option value="Clearance Update">Clearance Update</option>
+                          <option value="Clearance Process Successful">Clearance Process Successful</option>
+                          <option value="Awaiting Dispatch">Awaiting Dispatch</option>
+                          <!-- ✅ END ADDED -->
+
                           <option value="Out for Delivery">Out for Delivery</option>
                           <option value="Delivered">Delivered</option>
                           <option value="Delayed">Delayed</option>
@@ -437,3 +445,4 @@
   </div>
 </body>
 </html>
+
