@@ -8,10 +8,16 @@ import string
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change_this_secret_key_now")
 
-SHIPMENTS_FILE = "shipments.json"
-USERS_FILE = "users.json"
-APPLICATIONS_FILE = "applications.json"
-CHATS_FILE = "chats.json"   # chat storage
+# -----------------------
+# ✅ Render Disk (persistent storage)
+# -----------------------
+DATA_DIR = os.environ.get("DATA_DIR", "/var/data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+SHIPMENTS_FILE = os.path.join(DATA_DIR, "shipments.json")
+USERS_FILE = os.path.join(DATA_DIR, "users.json")
+APPLICATIONS_FILE = os.path.join(DATA_DIR, "applications.json")
+CHATS_FILE = os.path.join(DATA_DIR, "chats.json")   # chat storage
 
 DEFAULT_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@glopacshippingexpress.com").strip().lower()
 DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
@@ -36,6 +42,31 @@ def load_json(path, default):
 def save_json(path, data):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
+
+
+# -----------------------
+# ✅ One-time migration to disk
+# (copies old root JSON files into /var/data if disk versions don't exist yet)
+# -----------------------
+def migrate_json_to_disk():
+    mapping = [
+        ("shipments.json", SHIPMENTS_FILE),
+        ("users.json", USERS_FILE),
+        ("applications.json", APPLICATIONS_FILE),
+        ("chats.json", CHATS_FILE),
+    ]
+    for old_name, new_path in mapping:
+        try:
+            if os.path.exists(old_name) and (not os.path.exists(new_path)):
+                with open(old_name, "r", encoding="utf-8") as fsrc:
+                    data = fsrc.read()
+                with open(new_path, "w", encoding="utf-8") as fdst:
+                    fdst.write(data)
+        except Exception:
+            pass
+
+
+migrate_json_to_disk()
 
 
 # -----------------------
@@ -163,7 +194,7 @@ def apply_fees_logic(shipment: dict, status: str, fees_amount_raw, fees_reason_r
         shipment["fees"] = fees
 
 
-# ✅ CHANGED "Admin Update" -> "Shipment Update"
+# ✅ "Admin Update" -> "Shipment Update"
 def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str):
     if (old_status or "") != (new_status or ""):
         shipment.setdefault("events", []).append({
@@ -250,7 +281,6 @@ def ensure_auto_history(shipment: dict) -> bool:
     return changed
 
 
-# ✅ CHANGED "Admin Update" -> "Shipment Update"
 def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_est: str) -> bool:
     old_est = (old_est or "").strip()
     new_est = (new_est or "").strip()
@@ -1258,7 +1288,7 @@ def prohibited_items_alias():
     return redirect(url_for("prohibited_items"))
 
 
-# ✅ UPDATED: quote supports GET + POST (email -> success message)
+# ✅ quote supports GET + POST (email -> success message)
 @app.route("/quote", methods=["GET", "POST"])
 def quote():
     if request.method == "POST":
@@ -1302,4 +1332,3 @@ def terms():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
