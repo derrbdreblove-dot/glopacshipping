@@ -172,7 +172,7 @@
       <!-- LEFT SIDE -->
       <div>
 
-        <!-- Applications (unchanged) -->
+        <!-- Applications -->
         <div class="card">
           <h2>New Applications</h2>
           <p class="muted">Approve to create a user account and assign a plain password. Reject to decline.</p>
@@ -202,8 +202,8 @@
                     <div class="hr"></div>
                     <div class="two">
                       <form action="/admin/approve/{{ a.email }}" method="post">
-                        <label>Assign Password</label>
-                        <input type="text" name="password" placeholder="Set password" required>
+                        <label>Assign Password (plain)</label>
+                        <input type="text" name="password" placeholder="Set a password" required>
                         <button class="btn btn-good" type="submit">Approve & Create User</button>
                       </form>
 
@@ -220,20 +220,20 @@
           {% endif %}
         </div>
 
-        <!-- Add New Shipment -->
+        <!-- Add / Update Shipment -->
         <div class="card">
-          <h2>Add New Shipment</h2>
-          <p class="muted">Choose the exact date & time for the first event — it will show on the tracking page.</p>
+          <h2>Add / Update Shipment</h2>
+          <p class="muted"><strong>You must choose Date & Time</strong>. It will appear exactly as selected on the tracking page.</p>
 
           <form action="/admin" method="post">
             <input type="hidden" name="form_type" value="shipment">
 
-            <label>Tracking ID <span style="color:#e74c3c;">*</span></label>
+            <label>Tracking ID <span style="color:red;">*</span></label>
             <input type="text" name="tracking_id" required placeholder="e.g. BOE808080">
 
             <div class="two">
               <div>
-                <label>Status <span style="color:#e74c3c;">*</span></label>
+                <label>Status <span style="color:red;">*</span></label>
                 <input type="text" name="status" required placeholder="In Transit, On Hold, Delivered">
               </div>
               <div>
@@ -242,47 +242,45 @@
               </div>
             </div>
 
+            <!-- COMPULSORY DATETIME PICKER -->
+            <div class="two">
+              <div>
+                <label>Event Date & Time <span style="color:red;">*</span></label>
+                <input type="datetime-local" name="custom_event_date" required>
+                <small class="muted">Click to open calendar + time picker</small>
+              </div>
+              <div>
+                <label>Event Location</label>
+                <input type="text" name="custom_event_location" value="Shipment Update">
+              </div>
+            </div>
+
+            <label>Event Description <span style="color:red;">*</span></label>
+            <textarea name="custom_event_description" rows="3" placeholder="Shipment record created" required></textarea>
+
             <div class="two">
               <div>
                 <label>Origin</label>
-                <input type="text" name="origin" placeholder="New York, USA">
+                <input type="text" name="origin" placeholder="e.g. New York, USA">
               </div>
               <div>
                 <label>Destination</label>
-                <input type="text" name="destination" placeholder="London, UK">
+                <input type="text" name="destination" placeholder="e.g. London, UK">
               </div>
             </div>
 
             <label>Package Details</label>
-            <input type="text" name="package_details" placeholder="Electronics - 2kg">
-
-            <!-- Key field: Event Date & Time -->
-            <div class="two">
-              <div>
-                <label>Event Date & Time (for tracking page)</label>
-                <input type="text" name="custom_event_date" 
-                       placeholder="2026-04-11 14:30" 
-                       value="2026-04-11 10:00">
-                <small class="muted">Format: YYYY-MM-DD HH:MM</small>
-              </div>
-              <div>
-                <label>Event Location</label>
-                <input type="text" name="custom_event_location" value="System">
-              </div>
-            </div>
-
-            <label>Event Description</label>
-            <textarea name="custom_event_description" rows="3" placeholder="Shipment record created"></textarea>
+            <input type="text" name="package_details" placeholder="e.g. Electronics - 2kg">
 
             <div class="two">
               <div>
-                <label>Estimated Delivery</label>
+                <label>Estimated Delivery Date</label>
                 <input type="date" name="estimated_delivery">
               </div>
               <div>
                 <label>
                   <input type="checkbox" name="estimated_delivery_tbd_on_hold" style="width:auto;margin-right:8px;">
-                  Date TBD on hold
+                  Date will be made available when hold clears
                 </label>
               </div>
             </div>
@@ -303,7 +301,13 @@
               Mark fees as paid
             </label>
 
-            <button class="btn" type="submit">Create Shipment</button>
+            <label>Route (JSON) — optional</label>
+            <textarea name="route" rows="4" placeholder='[{"lat":40.7128,"lng":-74.0060,"label":"New York"}]'></textarea>
+
+            <label>Current Location (JSON) — optional</label>
+            <input type="text" name="current_location" placeholder='{"lat":40.7128,"lng":-74.0060}'>
+
+            <button class="btn" type="submit">Save Shipment</button>
           </form>
         </div>
       </div>
@@ -312,7 +316,7 @@
       <div>
         <div class="card">
           <h2>Existing Shipments</h2>
-          <p class="muted">Use the Event Date & Time field below to set any date you want for new events.</p>
+          <p class="muted">You can also add a new event with custom date & time here.</p>
 
           {% if shipments %}
             <ul class="list">
@@ -323,7 +327,7 @@
                       <div class="tid">{{ ship.tracking_id }} — {{ ship.status }}</div>
                       <div class="small"><b>Owner:</b> {{ ship.owner_email or "Unassigned" }}</div>
                       <div class="small" style="margin-top:8px;">
-                        <a href="/track?tracking_id={{ ship.tracking_id }}" style="font-weight:900;">View Tracking</a> | 
+                        <a href="/track?tracking_id={{ ship.tracking_id }}" style="font-weight:900;">View Tracking</a> |
                         <a href="/admin/chat/{{ ship.tracking_id }}" style="font-weight:900;">Open Chat</a>
                       </div>
                     </div>
@@ -332,10 +336,8 @@
                     </form>
                   </div>
 
-                  <!-- Inline Edit -->
                   <form action="/admin/update/{{ ship.tracking_id }}" method="post">
                     <div class="inline-form">
-
                       <div>
                         <label>Status</label>
                         <select name="status">
@@ -351,14 +353,13 @@
                       </div>
 
                       <div>
-                        <label>Event Date & Time (for tracking)</label>
-                        <input type="text" name="custom_event_date" placeholder="2026-04-11 14:30">
-                        <small class="muted">Leave empty to use current time</small>
+                        <label>Event Date & Time</label>
+                        <input type="datetime-local" name="custom_event_date">
                       </div>
 
                       <div class="full">
                         <label>Event Description</label>
-                        <textarea name="custom_event_description" rows="2" placeholder="Enter description for this update"></textarea>
+                        <textarea name="custom_event_description" rows="2" placeholder="New update description"></textarea>
                       </div>
 
                       <div class="full">
@@ -375,7 +376,6 @@
                         <label>Fees Reason</label>
                         <input type="text" name="fees_reason" value="{{ ship.fees.reason if ship.fees else '' }}">
                       </div>
-
                     </div>
 
                     <div class="inline-actions">
