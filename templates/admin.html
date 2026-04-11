@@ -114,7 +114,7 @@
 
     .inline-form{
       display:grid;
-      grid-template-columns: 1.1fr 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap:10px;
       margin-top:10px;
       align-items:end;
@@ -134,19 +134,17 @@
       gap:10px;
     }
 
-    /* New styles for custom event section */
     .custom-event-box {
       background: #f8fafc;
       border: 1px solid #d0d9e6;
       border-radius: 12px;
       padding: 14px;
-      margin: 16px 0;
+      margin: 16px 0 20px 0;
     }
 
     @media (max-width: 980px){
       .grid{grid-template-columns:1fr;}
       .inline-form{grid-template-columns:1fr;}
-      .two{grid-template-columns:1fr;}
     }
   </style>
 </head>
@@ -181,7 +179,7 @@
       <!-- LEFT SIDE -->
       <div>
 
-        <!-- Applications -->
+        <!-- Applications (unchanged) -->
         <div class="card">
           <h2>New Applications</h2>
           <p class="muted">Approve to create a user account and assign a plain password. Reject to decline.</p>
@@ -210,22 +208,18 @@
 
                   {% if a.status == "pending" %}
                     <div class="hr"></div>
-
                     <div class="two">
                       <form action="/admin/approve/{{ a.email }}" method="post">
                         <label>Assign Password (plain)</label>
                         <input type="text" name="password" placeholder="Set a password for this user" required>
-
                         <label>Admin note (optional)</label>
                         <input type="text" name="admin_note" placeholder="e.g. Approved - verified identity">
-
                         <button class="btn btn-good" type="submit">Approve & Create User</button>
                       </form>
 
                       <form action="/admin/reject/{{ a.email }}" method="post">
                         <label>Admin note (optional)</label>
                         <input type="text" name="admin_note" placeholder="Reason for rejection">
-
                         <button class="btn btn-danger" type="submit">Reject</button>
                       </form>
                     </div>
@@ -238,12 +232,10 @@
           {% endif %}
         </div>
 
-        <!-- Create / Update shipment -->
+        <!-- ====================== ADD / UPDATE SHIPMENT ====================== -->
         <div class="card">
-          <h2>Add / Update Shipment</h2>
-          <p class="muted">
-            Create a shipment or update any fields. You can now add events with **any custom date**.
-          </p>
+          <h2>Add New Shipment</h2>
+          <p class="muted">You can set the exact **Date Created** here. It will appear on the tracking page.</p>
 
           <form action="/admin" method="post">
             <input type="hidden" name="form_type" value="shipment">
@@ -254,7 +246,7 @@
             <div class="two">
               <div>
                 <label>Status <span style="color:#e74c3c;">*</span></label>
-                <input type="text" name="status" required placeholder="In Transit, On Hold, Delivered">
+                <input type="text" name="status" required placeholder="e.g. Label Created, In Transit, On Hold">
               </div>
               <div>
                 <label>Owner Email</label>
@@ -264,11 +256,11 @@
 
             <div class="two">
               <div>
-                <label>Origin (address/city)</label>
+                <label>Origin</label>
                 <input type="text" name="origin" placeholder="e.g. New York, USA">
               </div>
               <div>
-                <label>Destination (address/city)</label>
+                <label>Destination</label>
                 <input type="text" name="destination" placeholder="e.g. London, UK">
               </div>
             </div>
@@ -276,71 +268,62 @@
             <label>Package Details</label>
             <input type="text" name="package_details" placeholder="e.g. Electronics - 2kg">
 
+            <!-- Date Created - Main feature you requested -->
             <div class="two">
               <div>
-                <label>Expected Delivery Date</label>
+                <label>Date Created (will show on tracking)</label>
+                <input type="text" name="custom_event_date" 
+                       value="{{ now_str() if now_str is defined else '2026-04-11 10:00' }}"
+                       placeholder="2026-04-11 10:00" required>
+                <small class="muted">Format: YYYY-MM-DD HH:MM</small>
+              </div>
+              <div>
+                <label>Event Location (optional)</label>
+                <input type="text" name="custom_event_location" value="System" placeholder="e.g. System, Origin Facility">
+              </div>
+            </div>
+
+            <label>Initial Event Description</label>
+            <textarea name="custom_event_description" rows="3" required 
+              placeholder="Shipment record created&#10;Label printed and ready for pickup"></textarea>
+
+            <!-- Other fields -->
+            <div class="two">
+              <div>
+                <label>Estimated Delivery Date</label>
                 <input type="date" name="estimated_delivery">
               </div>
               <div>
                 <label>
                   <input type="checkbox" name="estimated_delivery_tbd_on_hold" style="width:auto;margin-right:8px;">
-                  Date will be made available when hold clears
+                  Date TBD until hold clears
                 </label>
               </div>
             </div>
 
-            <!-- Fees Section -->
             <div class="two">
               <div>
-                <label>Customs/Taxes Fee Amount (optional)</label>
-                <input type="number" step="0.01" name="fees_amount" placeholder="e.g. 45.50">
+                <label>Fees Amount (optional)</label>
+                <input type="number" step="0.01" name="fees_amount" placeholder="45.50">
               </div>
               <div>
-                <label>Fee Reason (optional)</label>
-                <input type="text" name="fees_reason" placeholder="e.g. Customs and Taxes">
+                <label>Fee Reason</label>
+                <input type="text" name="fees_reason" placeholder="Customs and Taxes">
               </div>
             </div>
 
             <label>
               <input type="checkbox" name="fees_paid" style="width:auto;margin-right:8px;">
-              Mark fees as paid (optional)
+              Mark fees as already paid
             </label>
 
-            <!-- Route & Location -->
-            <label>Route (JSON array) — optional</label>
-            <textarea name="route" rows="4"
-              placeholder='[{"lat":40.7128,"lng":-74.0060,"label":"New York"}, {"lat":51.5074,"lng":-0.1278,"label":"London"}]'></textarea>
+            <label>Route (JSON) — optional</label>
+            <textarea name="route" rows="4" placeholder='[{"lat":40.7128,"lng":-74.0060,"label":"Origin"}]'></textarea>
 
             <label>Current Location (JSON) — optional</label>
-            <input type="text" name="current_location" placeholder='{"lat":48.8566,"lng":2.3522}'>
+            <input type="text" name="current_location" placeholder='{"lat":40.7128,"lng":-74.0060}'>
 
-            <!-- ==================== NEW: CUSTOM EVENT SECTION ==================== -->
-            <div class="custom-event-box">
-              <h3 style="margin:0 0 10px 0; color:var(--brand);">Add Custom Event with Any Date</h3>
-              <p class="muted" style="margin-bottom:12px;">You can add historical or future events with exact dates (e.g. "Picked up on March 5th").</p>
-
-              <div class="two">
-                <div>
-                  <label>Event Date & Time</label>
-                  <input type="text" name="custom_event_date" 
-                         placeholder="2026-04-11 14:30" 
-                         title="Format: YYYY-MM-DD HH:MM">
-                </div>
-                <div>
-                  <label>Event Location</label>
-                  <input type="text" name="custom_event_location" 
-                         value="Shipment Update" 
-                         placeholder="e.g. Miami Hub, Customs Office">
-                </div>
-              </div>
-
-              <label>Event Description</label>
-              <textarea name="custom_event_description" rows="3"
-                placeholder="Package was picked up by carrier&#10;Cleared customs successfully&#10;Delayed due to weather"></textarea>
-            </div>
-            <!-- ==================== END CUSTOM EVENT ==================== -->
-
-            <button class="btn" type="submit">Save Shipment</button>
+            <button class="btn" type="submit">Create Shipment</button>
           </form>
         </div>
       </div>
@@ -349,7 +332,7 @@
       <div>
         <div class="card">
           <h2>Existing Shipments</h2>
-          <p class="muted">Click "Save Changes" to update. Use the main form above to add events with custom dates.</p>
+          <p class="muted">Edit status, fees, or add a new event with any date you want (it will appear on tracking page).</p>
 
           {% if shipments %}
             <ul class="list">
@@ -360,94 +343,84 @@
                       <div class="tid">{{ ship.tracking_id }} — {{ ship.status }}</div>
                       <div class="small"><b>Owner:</b> {{ ship.owner_email or "Unassigned" }}</div>
                       {% if ship.origin or ship.destination %}
-                        <div class="small"><b>From:</b> {{ ship.origin or "-" }} • <b>To:</b> {{ ship.destination or "-" }}</div>
+                        <div class="small"><b>Route:</b> {{ ship.origin or "-" }} → {{ ship.destination or "-" }}</div>
                       {% endif %}
-
-                      {% if ship.estimated_delivery_tbd_on_hold %}
-                        <div class="small"><b>Expected delivery:</b> Date will be made available when hold clears</div>
-                      {% elif ship.estimated_delivery %}
-                        <div class="small"><b>Expected delivery:</b> {{ ship.estimated_delivery }}</div>
+                      {% if ship.estimated_delivery %}
+                        <div class="small"><b>Est. Delivery:</b> {{ ship.estimated_delivery }}</div>
                       {% endif %}
-
-                      {% if ship.fees and not ship.fees.paid %}
-                        {% if ship.fees.payment_submitted %}
-                          <div class="pill pill-pending">Payment Submitted</div>
-                        {% else %}
-                          <div class="pill pill-hold">On Hold (Unpaid Fees)</div>
-                        {% endif %}
-                      {% elif ship.fees and ship.fees.paid %}
-                        <div class="pill pill-paid">Fees Paid</div>
-                      {% endif %}
-
-                      <div class="small" style="margin-top:8px; display:flex; gap:14px; flex-wrap:wrap;">
-                        <a href="/track?tracking_id={{ ship.tracking_id }}">View tracking</a>
-                        <a href="/admin/chat/{{ ship.tracking_id }}" style="font-weight:900;">Open chat</a>
-                      </div>
                     </div>
-
                     <form action="/delete/{{ ship.tracking_id }}" method="post">
                       <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                   </div>
 
-                  <!-- Inline Edit Form (kept mostly the same) -->
+                  <!-- Inline Edit Form -->
                   <form action="/admin/update/{{ ship.tracking_id }}" method="post">
                     <div class="inline-form">
+
                       <div>
                         <label>Status</label>
-                        <select name="status" required>
-                          {% set st = ship.status or "" %}
-                          <option value="{{ st }}">{{ st if st else "Choose…" }}</option>
+                        <select name="status">
+                          <option value="{{ ship.status }}">{{ ship.status }}</option>
                           <option value="Label Created">Label Created</option>
                           <option value="Picked Up">Picked Up</option>
                           <option value="In Transit">In Transit</option>
-                          <option value="Arrived at Destination Country">Arrived at Destination Country</option>
-                          <option value="Clearance Update">Clearance Update</option>
-                          <option value="Clearance Process Successful">Clearance Process Successful</option>
-                          <option value="Awaiting Dispatch">Awaiting Dispatch</option>
                           <option value="Out for Delivery">Out for Delivery</option>
                           <option value="Delivered">Delivered</option>
-                          <option value="Delayed">Delayed</option>
                           <option value="On Hold">On Hold</option>
+                          <option value="Delayed">Delayed</option>
                           <option value="Custom Status">Custom Status</option>
                         </select>
                       </div>
 
                       <div>
                         <label>Fees Amount</label>
-                        <input type="number" step="0.01" name="fees_amount"
-                               value="{{ ship.fees.amount if ship.fees and ship.fees.amount is not none else '' }}"
-                               placeholder="e.g. 125.00">
+                        <input type="number" step="0.01" name="fees_amount" 
+                               value="{{ ship.fees.amount if ship.fees else '' }}">
                       </div>
 
                       <div>
                         <label>Fees Reason</label>
-                        <input type="text" name="fees_reason"
-                               value="{{ ship.fees.reason if ship.fees and ship.fees.reason else '' }}"
-                               placeholder="e.g. Customs and Taxes">
+                        <input type="text" name="fees_reason" 
+                               value="{{ ship.fees.reason if ship.fees else '' }}">
                       </div>
 
                       <div class="full">
-                        <label>Expected Delivery Date</label>
+                        <label>Estimated Delivery</label>
                         <input type="date" name="estimated_delivery" value="{{ ship.estimated_delivery or '' }}">
-                        <label style="margin-top:10px;">
-                          <input type="checkbox" name="estimated_delivery_tbd_on_hold" style="width:auto;margin-right:8px;"
+                        <label style="margin-top:8px;">
+                          <input type="checkbox" name="estimated_delivery_tbd_on_hold" 
                                  {% if ship.estimated_delivery_tbd_on_hold %}checked{% endif %}>
-                          Date will be made available when hold clears
+                          Date TBD on hold
                         </label>
                       </div>
 
+                      <!-- New: Add Custom Dated Event while editing -->
+                      <div class="full custom-event-box">
+                        <strong>Add New Event with Custom Date</strong><br>
+                        <small class="muted">(This will appear on the tracking page with the exact date you choose)</small>
+                        
+                        <div class="two" style="margin-top:10px;">
+                          <div>
+                            <label>Event Date & Time</label>
+                            <input type="text" name="custom_event_date" placeholder="2026-04-11 14:30">
+                          </div>
+                          <div>
+                            <label>Location</label>
+                            <input type="text" name="custom_event_location" value="Shipment Update">
+                          </div>
+                        </div>
+                        
+                        <label style="margin-top:8px;">Event Description</label>
+                        <textarea name="custom_event_description" rows="2" 
+                          placeholder="Package picked up by carrier&#10;Cleared customs at Miami&#10;Delayed due to weather"></textarea>
+                      </div>
+
                       <div class="full">
-                        <label>If “Custom Status”, type here</label>
+                        <label>If Custom Status selected above, type here</label>
                         <input type="text" name="custom_status" placeholder="e.g. Held at Sorting Facility">
                       </div>
 
-                      <div class="full">
-                        <label>
-                          <input type="checkbox" name="clear_fees" value="1" style="width:auto; margin-right:8px;">
-                          Clear fees (remove fees object)
-                        </label>
-                      </div>
                     </div>
 
                     <div class="inline-actions">
@@ -455,9 +428,9 @@
                     </div>
                   </form>
 
-                  {% if ship.fees and ship.fees.payment_submitted and not ship.fees.paid %}
+                  {% if ship.fees and ship.fees.payment_submitted and not ship.fees.get('paid') %}
                     <form action="/verify_payment/{{ ship.tracking_id }}" method="post" style="margin-top:8px;">
-                      <button type="submit" class="btn btn-warn">Verify & Release</button>
+                      <button type="submit" class="btn btn-warn">Verify & Release Payment</button>
                     </form>
                   {% endif %}
 
@@ -465,7 +438,7 @@
               {% endfor %}
             </ul>
           {% else %}
-            <p>No shipments yet.</p>
+            <p class="muted">No shipments found.</p>
           {% endif %}
         </div>
       </div>
