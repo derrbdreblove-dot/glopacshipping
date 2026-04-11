@@ -194,21 +194,24 @@ def apply_fees_logic(shipment: dict, status: str, fees_amount_raw, fees_reason_r
 
 
 # -----------------------
-# ✅ CUSTOM EVENT WITH ANY DATE
+# ✅ CUSTOM EVENT WITH ADMIN-SELECTED DATE
 # -----------------------
 def add_event(shipment: dict, date_str: str, location: str, description: str):
-    """Add an event with a custom date (or current time if date_str is empty)"""
-    if not description:
+    """Add an event using the exact date provided by admin (or now if empty)"""
+    if not description or not description.strip():
         return
-    if not date_str or not date_str.strip():
-        date_str = now_str()
+
+    # Use the date the admin entered, otherwise fall back to current time
+    event_date = (date_str or "").strip()
+    if not event_date:
+        event_date = now_str()
 
     shipment.setdefault("events", [])
     if not isinstance(shipment["events"], list):
         shipment["events"] = []
 
     shipment["events"].append({
-        "date": date_str.strip(),
+        "date": event_date,
         "location": (location or "Shipment Update").strip(),
         "description": description.strip()
     })
@@ -218,7 +221,7 @@ def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str
     if (old_status or "") != (new_status or ""):
         add_event(
             shipment,
-            now_str(),
+            now_str(),  # status change always uses current time
             "Shipment Update",
             f"Status updated: {old_status or 'N/A'} → {new_status}"
         )
@@ -300,7 +303,6 @@ def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_es
     if old_est == new_est:
         return False
 
-    key = f"estimated_delivery:{new_est or 'cleared'}"
     if new_est:
         add_event(shipment, now_str(), "Shipment Update", f"Estimated delivery set: {new_est}")
     else:
@@ -774,7 +776,7 @@ def track():
 
 
 # -----------------------
-# Payment & Chat Routes (unchanged)
+# Payment page
 # -----------------------
 @app.route("/pay/<tracking_id>", methods=["GET"])
 def payment_page(tracking_id):
@@ -803,6 +805,9 @@ def payment_page(tracking_id):
     return render_template("payment.html", user=u, tracking_id=tracking_id, fees=fees)
 
 
+# -----------------------
+# Initiate Payment
+# -----------------------
 @app.route("/initiate_payment/<tracking_id>", methods=["POST"])
 def initiate_payment(tracking_id):
     gate = require_login(next_url=url_for("payment_page", tracking_id=tracking_id))
@@ -847,6 +852,7 @@ def initiate_payment(tracking_id):
     save_json(SHIPMENTS_FILE, shipments)
 
     chat_ensure_thread(tracking_id, owner_email)
+
     chat_add_message(
         tracking_id,
         "system",
@@ -856,6 +862,9 @@ def initiate_payment(tracking_id):
     return redirect(url_for("payment_chat", tracking_id=tracking_id))
 
 
+# -----------------------
+# Payment chat (User)
+# -----------------------
 @app.route("/payment_chat/<tracking_id>", methods=["GET", "POST"])
 def payment_chat(tracking_id):
     gate = require_login(next_url=url_for("payment_chat", tracking_id=tracking_id))
@@ -918,6 +927,9 @@ def payment_chat(tracking_id):
     )
 
 
+# -----------------------
+# Admin chat
+# -----------------------
 @app.route("/admin/chat/<tracking_id>", methods=["GET", "POST"])
 def admin_chat(tracking_id):
     gate = require_admin(next_url=url_for("admin_chat", tracking_id=tracking_id))
@@ -947,7 +959,7 @@ def admin_chat(tracking_id):
 
 
 # -----------------------
-# ADMIN PANEL - Main Change Here
+# ADMIN PANEL
 # -----------------------
 @app.route("/admin", methods=["GET", "POST"])
 def admin_panel():
@@ -971,7 +983,7 @@ def admin_panel():
         destination = request.form.get("destination", "").strip()
         package_details = request.form.get("package_details", "").strip()
 
-        # === NEW: Custom Date Event Fields ===
+        # Custom date fields from form
         custom_event_date = request.form.get("custom_event_date", "").strip()
         custom_event_location = request.form.get("custom_event_location", "Shipment Update").strip()
         custom_event_description = request.form.get("custom_event_description", "").strip()
@@ -1042,7 +1054,7 @@ def admin_panel():
 
         updated.setdefault("events", existing.get("events", []))
 
-        # === ADD CUSTOM DATED EVENT ===
+        # Use the exact date the admin entered for the new event
         if custom_event_description:
             add_event(updated, custom_event_date, custom_event_location, custom_event_description)
 
@@ -1063,7 +1075,7 @@ def admin_panel():
         save_json(SHIPMENTS_FILE, shipments)
         return redirect(url_for("admin_panel"))
 
-    # Render admin page
+    # Render shipments list
     ship_list = []
     for tid, s in shipments.items():
         ship_list.append({
@@ -1144,6 +1156,12 @@ def admin_update_shipment(tracking_id):
 
     if should_regenerate_route(shipments.get(tracking_id, {}), shipment):
         shipment["route"] = generate_route(shipment.get("origin"), shipment.get("destination"))
+
+    # Use custom date for new event in inline update
+    custom_event_date = request.form.get("custom_event_date", "").strip()
+    custom_event_description = request.form.get("custom_event_description", "").strip()
+    if custom_event_description:
+        add_event(shipment, custom_event_date, "Shipment Update", custom_event_description)
 
     add_status_event_if_changed(shipment, old_status, shipment.get("status", ""))
     add_estimated_delivery_event_if_changed(shipment, old_est or "", shipment.get("estimated_delivery") or "")
