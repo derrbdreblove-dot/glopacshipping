@@ -17,14 +17,14 @@ os.makedirs(DATA_DIR, exist_ok=True)
 SHIPMENTS_FILE = os.path.join(DATA_DIR, "shipments.json")
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
 APPLICATIONS_FILE = os.path.join(DATA_DIR, "applications.json")
-CHATS_FILE = os.path.join(DATA_DIR, "chats.json")   # chat storage
+CHATS_FILE = os.path.join(DATA_DIR, "chats.json")
 
 DEFAULT_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@glopacshippingexpress.com").strip().lower()
 DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 
 
 # -----------------------
-# JSON helpers (safe)
+# JSON helpers
 # -----------------------
 def load_json(path, default):
     if os.path.exists(path):
@@ -45,7 +45,7 @@ def save_json(path, data):
 
 
 # -----------------------
-# ✅ One-time migration to disk
+# Migration
 # -----------------------
 def migrate_json_to_disk():
     mapping = [
@@ -56,7 +56,7 @@ def migrate_json_to_disk():
     ]
     for old_name, new_path in mapping:
         try:
-            if os.path.exists(old_name) and (not os.path.exists(new_path)):
+            if os.path.exists(old_name) and not os.path.exists(new_path):
                 with open(old_name, "r", encoding="utf-8") as fsrc:
                     data = fsrc.read()
                 with open(new_path, "w", encoding="utf-8") as fdst:
@@ -98,7 +98,7 @@ def sort_events(events):
 
 
 # -----------------------
-# Users / Auth helpers (PLAIN PASSWORDS)
+# Users / Auth
 # -----------------------
 def ensure_default_admin_exists():
     users = load_json(USERS_FILE, {})
@@ -106,7 +106,7 @@ def ensure_default_admin_exists():
         users[DEFAULT_ADMIN_EMAIL] = {
             "email": DEFAULT_ADMIN_EMAIL,
             "name": "Glopac Shipping Express Admin",
-            "password": DEFAULT_ADMIN_PASSWORD,  # PLAIN (demo)
+            "password": DEFAULT_ADMIN_PASSWORD,
             "role": "admin",
             "active": True,
             "created_at": now_str(),
@@ -119,12 +119,10 @@ def current_user():
     if not email:
         return None
     email = email.strip().lower()
-
     users = load_json(USERS_FILE, {})
     u = users.get(email)
     if not u or not u.get("active", True):
         return None
-
     return {
         "email": u.get("email", email),
         "name": u.get("name", ""),
@@ -194,14 +192,13 @@ def apply_fees_logic(shipment: dict, status: str, fees_amount_raw, fees_reason_r
 
 
 # -----------------------
-# ✅ CUSTOM EVENT WITH ADMIN-SELECTED DATE
+# ADD EVENT - RESPECTS ADMIN DATE
 # -----------------------
 def add_event(shipment: dict, date_str: str, location: str, description: str):
-    """Add an event using the exact date provided by admin (or now if empty)"""
     if not description or not description.strip():
         return
 
-    # Use the date the admin entered, otherwise fall back to current time
+    # Use the date provided by admin, otherwise use current time
     event_date = (date_str or "").strip()
     if not event_date:
         event_date = now_str()
@@ -221,14 +218,14 @@ def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str
     if (old_status or "") != (new_status or ""):
         add_event(
             shipment,
-            now_str(),  # status change always uses current time
+            now_str(),
             "Shipment Update",
             f"Status updated: {old_status or 'N/A'} → {new_status}"
         )
 
 
 # -----------------------
-# ✅ AUTO SHIPMENT HISTORY (milestones)
+# Auto History
 # -----------------------
 def _event_key_list(shipment: dict):
     shipment.setdefault("_auto_event_keys", [])
@@ -275,12 +272,7 @@ def ensure_auto_history(shipment: dict) -> bool:
     status = shipment.get("status", "Unknown")
     bucket = normalize_status_bucket(status)
 
-    changed |= add_auto_event_once(
-        shipment,
-        "milestone_created",
-        "System",
-        "Shipment record created"
-    )
+    changed |= add_auto_event_once(shipment, "milestone_created", "System", "Shipment record created")
 
     if bucket == "picked_up":
         changed |= add_auto_event_once(shipment, "milestone_picked_up", "Carrier Scan", "Shipment picked up")
@@ -299,7 +291,6 @@ def ensure_auto_history(shipment: dict) -> bool:
 def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_est: str) -> bool:
     old_est = (old_est or "").strip()
     new_est = (new_est or "").strip()
-
     if old_est == new_est:
         return False
 
@@ -311,7 +302,7 @@ def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_es
 
 
 # -----------------------
-# Route auto-generation
+# Route generation (unchanged)
 # -----------------------
 CITY_DB = {
     "new york": {"lat": 40.7128, "lng": -74.0060, "label": "New York, USA"},
@@ -402,7 +393,7 @@ def should_regenerate_route(existing: dict, updated: dict) -> bool:
 
 
 # -----------------------
-# CHAT helpers
+# CHAT helpers (unchanged)
 # -----------------------
 def _chat_safe_tracking(tracking_id: str):
     return (tracking_id or "").strip()
@@ -510,16 +501,13 @@ def inject_chat_notifications():
 
 
 # -----------------------
-# Home
+# Routes (Home, Login, etc.)
 # -----------------------
 @app.route("/")
 def index():
     return render_template("index.html", user=current_user())
 
 
-# -----------------------
-# Login / Logout
-# -----------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     ensure_default_admin_exists()
@@ -557,9 +545,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-# -----------------------
-# Sign up (APPLICATION ONLY)
-# -----------------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -568,19 +553,16 @@ def signup():
         reason = request.form.get("reason", "").strip()
 
         if not name or not email:
-            return render_template("signup.html", user=current_user(),
-                                   error="Name and email are required."), 400
+            return render_template("signup.html", user=current_user(), error="Name and email are required."), 400
 
         users = load_json(USERS_FILE, {})
         if email in users:
-            return render_template("signup.html", user=current_user(),
-                                   error="This email already has an account. Please log in."), 400
+            return render_template("signup.html", user=current_user(), error="This email already has an account. Please log in."), 400
 
         applications = load_json(APPLICATIONS_FILE, {})
         existing = applications.get(email)
         if existing and existing.get("status") == "pending":
-            return render_template("signup.html", user=current_user(),
-                                   error="Your application is already pending. Please wait for approval."), 400
+            return render_template("signup.html", user=current_user(), error="Your application is already pending. Please wait for approval."), 400
 
         applications[email] = {
             "name": name,
@@ -592,26 +574,18 @@ def signup():
         }
         save_json(APPLICATIONS_FILE, applications)
 
-        return render_template("signup.html", user=current_user(),
-                               success="Account creating pending approval. You will be contacted by email after review.")
+        return render_template("signup.html", user=current_user(), success="Account creating pending approval. You will be contacted by email after review.")
 
     return render_template("signup.html", user=current_user())
 
 
-# -----------------------
-# Ship page
-# -----------------------
 @app.route("/ship", methods=["GET", "POST"])
 def ship():
     if request.method == "POST":
-        return render_template("ship.html", user=current_user(),
-                               success="✅ Shipment request received. We’ll contact you by email with next steps.")
+        return render_template("ship.html", user=current_user(), success="✅ Shipment request received. We’ll contact you by email with next steps.")
     return render_template("ship.html", user=current_user())
 
 
-# -----------------------
-# Support Chat launcher
-# -----------------------
 @app.route("/support_chat")
 def support_chat():
     gate = require_login(next_url="/support_chat")
@@ -650,9 +624,6 @@ def support_chat():
     return redirect(url_for("payment_chat", tracking_id=latest_tid))
 
 
-# -----------------------
-# My Shipments
-# -----------------------
 @app.route("/my_shipments")
 def my_shipments():
     gate = require_login(next_url=url_for("my_shipments"))
@@ -686,9 +657,7 @@ def my_shipments_alias():
     return redirect(url_for("my_shipments"))
 
 
-# -----------------------
-# Tracking
-# -----------------------
+# Tracking route (unchanged)
 @app.route("/track", methods=["GET", "POST"])
 def track():
     tracking_id = (
@@ -775,9 +744,7 @@ def track():
     )
 
 
-# -----------------------
-# Payment page
-# -----------------------
+# Payment and Chat routes (kept exactly as you had them)
 @app.route("/pay/<tracking_id>", methods=["GET"])
 def payment_page(tracking_id):
     gate = require_login(next_url=url_for("payment_page", tracking_id=tracking_id))
@@ -805,9 +772,6 @@ def payment_page(tracking_id):
     return render_template("payment.html", user=u, tracking_id=tracking_id, fees=fees)
 
 
-# -----------------------
-# Initiate Payment
-# -----------------------
 @app.route("/initiate_payment/<tracking_id>", methods=["POST"])
 def initiate_payment(tracking_id):
     gate = require_login(next_url=url_for("payment_page", tracking_id=tracking_id))
@@ -852,7 +816,6 @@ def initiate_payment(tracking_id):
     save_json(SHIPMENTS_FILE, shipments)
 
     chat_ensure_thread(tracking_id, owner_email)
-
     chat_add_message(
         tracking_id,
         "system",
@@ -862,9 +825,6 @@ def initiate_payment(tracking_id):
     return redirect(url_for("payment_chat", tracking_id=tracking_id))
 
 
-# -----------------------
-# Payment chat (User)
-# -----------------------
 @app.route("/payment_chat/<tracking_id>", methods=["GET", "POST"])
 def payment_chat(tracking_id):
     gate = require_login(next_url=url_for("payment_chat", tracking_id=tracking_id))
@@ -927,9 +887,6 @@ def payment_chat(tracking_id):
     )
 
 
-# -----------------------
-# Admin chat
-# -----------------------
 @app.route("/admin/chat/<tracking_id>", methods=["GET", "POST"])
 def admin_chat(tracking_id):
     gate = require_admin(next_url=url_for("admin_chat", tracking_id=tracking_id))
@@ -959,7 +916,7 @@ def admin_chat(tracking_id):
 
 
 # -----------------------
-# ADMIN PANEL
+# ADMIN PANEL - Full original fields restored
 # -----------------------
 @app.route("/admin", methods=["GET", "POST"])
 def admin_panel():
@@ -983,7 +940,7 @@ def admin_panel():
         destination = request.form.get("destination", "").strip()
         package_details = request.form.get("package_details", "").strip()
 
-        # Custom date fields from form
+        # Custom event date fields
         custom_event_date = request.form.get("custom_event_date", "").strip()
         custom_event_location = request.form.get("custom_event_location", "Shipment Update").strip()
         custom_event_description = request.form.get("custom_event_description", "").strip()
@@ -1054,7 +1011,7 @@ def admin_panel():
 
         updated.setdefault("events", existing.get("events", []))
 
-        # Use the exact date the admin entered for the new event
+        # Add event using the date the admin entered
         if custom_event_description:
             add_event(updated, custom_event_date, custom_event_location, custom_event_description)
 
@@ -1075,7 +1032,7 @@ def admin_panel():
         save_json(SHIPMENTS_FILE, shipments)
         return redirect(url_for("admin_panel"))
 
-    # Render shipments list
+    # Render page
     ship_list = []
     for tid, s in shipments.items():
         ship_list.append({
@@ -1105,9 +1062,7 @@ def admin_panel():
     return render_template("admin.html", user=current_user(), shipments=ship_list, applications=app_list)
 
 
-# -----------------------
-# Other Admin Actions
-# -----------------------
+# Other admin routes (kept as original)
 @app.route("/admin/update/<tracking_id>", methods=["POST"])
 def admin_update_shipment(tracking_id):
     gate = require_admin(next_url=url_for("admin_panel"))
@@ -1157,7 +1112,7 @@ def admin_update_shipment(tracking_id):
     if should_regenerate_route(shipments.get(tracking_id, {}), shipment):
         shipment["route"] = generate_route(shipment.get("origin"), shipment.get("destination"))
 
-    # Use custom date for new event in inline update
+    # Support custom date in inline update
     custom_event_date = request.form.get("custom_event_date", "").strip()
     custom_event_description = request.form.get("custom_event_description", "").strip()
     if custom_event_description:
@@ -1277,9 +1232,7 @@ def verify_payment(tracking_id):
     return redirect(url_for("admin_panel"))
 
 
-# -----------------------
 # Website pages
-# -----------------------
 @app.route("/contact")
 def contact():
     return render_template("contact.html", user=current_user())
