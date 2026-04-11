@@ -46,6 +46,7 @@ def save_json(path, data):
 
 # -----------------------
 # ✅ One-time migration to disk
+# (copies old root JSON files into /var/data if disk versions don't exist yet)
 # -----------------------
 def migrate_json_to_disk():
     mapping = [
@@ -193,37 +194,14 @@ def apply_fees_logic(shipment: dict, status: str, fees_amount_raw, fees_reason_r
         shipment["fees"] = fees
 
 
-# -----------------------
-# ✅ CUSTOM EVENT - NO AUTOMATIC DATE (Compulsory from admin)
-# -----------------------
-def add_event(shipment: dict, date_str: str, location: str, description: str):
-    """Only add event if admin provides a date. No automatic current time."""
-    if not description or not description.strip():
-        return
-
-    # Do NOT fallback to now_str() - must use date from form
-    if not date_str or not date_str.strip():
-        return  # Skip if no date provided
-
-    shipment.setdefault("events", [])
-    if not isinstance(shipment["events"], list):
-        shipment["events"] = []
-
-    shipment["events"].append({
-        "date": date_str.strip(),
-        "location": (location or "Shipment Update").strip(),
-        "description": description.strip()
-    })
-
-
+# ✅ "Admin Update" -> "Shipment Update"
 def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str):
     if (old_status or "") != (new_status or ""):
-        add_event(
-            shipment,
-            now_str(),
-            "Shipment Update",
-            f"Status updated: {old_status or 'N/A'} → {new_status}"
-        )
+        shipment.setdefault("events", []).append({
+            "date": now_str(),
+            "location": "Shipment Update",
+            "description": f"Status updated: {old_status or 'N/A'} → {new_status}"
+        })
 
 
 # -----------------------
@@ -244,7 +222,15 @@ def add_auto_event_once(shipment: dict, key: str, location: str, description: st
     if key in keys:
         return False
 
-    add_event(shipment, now_str(), location, description)
+    shipment.setdefault("events", [])
+    if not isinstance(shipment["events"], list):
+        shipment["events"] = []
+
+    shipment["events"].append({
+        "date": now_str(),
+        "location": location,
+        "description": description
+    })
     keys.append(key)
     return True
 
@@ -302,15 +288,16 @@ def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_es
     if old_est == new_est:
         return False
 
+    key = f"estimated_delivery:{new_est or 'cleared'}"
     if new_est:
-        add_event(shipment, now_str(), "Shipment Update", f"Estimated delivery set: {new_est}")
+        return add_auto_event_once(shipment, key, "Shipment Update", f"Estimated delivery set: {new_est}")
     else:
-        add_event(shipment, now_str(), "Shipment Update", "Estimated delivery cleared")
-    return True
+        return add_auto_event_once(shipment, key, "Shipment Update", "Estimated delivery cleared")
 
 
 # -----------------------
 # Route auto-generation
+# (North America, South America, Asia, Europe ONLY)
 # -----------------------
 CITY_DB = {
     "new york": {"lat": 40.7128, "lng": -74.0060, "label": "New York, USA"},
@@ -449,7 +436,7 @@ def chat_add_message(tracking_id: str, sender: str, text: str):
     th["messages"].append({
         "ts": now_ts(),
         "time": now_str(),
-        "sender": sender,
+        "sender": sender,     # "user" | "admin" | "system"
         "text": text
     })
 
@@ -598,7 +585,7 @@ def signup():
 
 
 # -----------------------
-# Ship page
+# Ship page (UI-only)
 # -----------------------
 @app.route("/ship", methods=["GET", "POST"])
 def ship():
@@ -609,7 +596,7 @@ def ship():
 
 
 # -----------------------
-# Support Chat launcher
+# ✅ Support Chat launcher (fixes /support_chat not found)
 # -----------------------
 @app.route("/support_chat")
 def support_chat():
@@ -805,7 +792,7 @@ def payment_page(tracking_id):
 
 
 # -----------------------
-# Initiate Payment
+# Initiate Payment -> generates code and opens chat
 # -----------------------
 @app.route("/initiate_payment/<tracking_id>", methods=["POST"])
 def initiate_payment(tracking_id):
@@ -903,7 +890,11 @@ def payment_chat(tracking_id):
                     shipment["fees"] = fees
                     shipment["status"] = "On Hold"
 
-                    add_event(shipment, now_str(), "Payment Chat", "Verification code received - awaiting payment details")
+                    shipment.setdefault("events", []).append({
+                        "date": now_str(),
+                        "location": "Payment Chat",
+                        "description": "Verification code received - awaiting payment details"
+                    })
 
                     ensure_auto_history(shipment)
 
@@ -958,7 +949,7 @@ def admin_chat(tracking_id):
 
 
 # -----------------------
-# ADMIN PANEL
+# Admin Panel (Shipments + Applications)
 # -----------------------
 @app.route("/admin", methods=["GET", "POST"])
 def admin_panel():
@@ -981,11 +972,6 @@ def admin_panel():
         origin = request.form.get("origin", "").strip()
         destination = request.form.get("destination", "").strip()
         package_details = request.form.get("package_details", "").strip()
-
-        # Custom date fields
-        custom_event_date = request.form.get("custom_event_date", "").strip()
-        custom_event_location = request.form.get("custom_event_location", "Shipment Update").strip()
-        custom_event_description = request.form.get("custom_event_description", "").strip()
 
         old_est = (shipments.get(tracking_id, {}) or {}).get("estimated_delivery")
         estimated_delivery = request.form.get("estimated_delivery", "").strip()
@@ -1027,35 +1013,33 @@ def admin_panel():
             if estimated_delivery:
                 updated["estimated_delivery"] = estimated_delivery
 
-        # Route
+        # route
         if route_raw:
             try:
                 route = json.loads(route_raw)
-                if isinstance(route, list):
-                    updated["route"] = route
+                if not isinstance(route, list):
+                    return ("Route must be a JSON array", 400)
+                updated["route"] = route
             except Exception:
-                pass
+                return ("Invalid JSON for route", 400)
         else:
             updated.setdefault("route", existing.get("route") if isinstance(existing.get("route"), list) else [])
             if should_regenerate_route(existing, updated):
                 updated["route"] = generate_route(updated.get("origin"), updated.get("destination"))
 
-        # Current location
+        # current location
         if current_location_raw:
             try:
                 cl = json.loads(current_location_raw)
-                if isinstance(cl, dict):
-                    updated["current_location"] = cl
+                if not isinstance(cl, dict):
+                    return ("Current location must be a JSON object", 400)
+                updated["current_location"] = cl
             except Exception:
-                pass
+                return ("Invalid JSON for current_location", 400)
         else:
             updated.setdefault("current_location", existing.get("current_location"))
 
         updated.setdefault("events", existing.get("events", []))
-
-        # Add event using the exact date the admin entered
-        if custom_event_description:
-            add_event(updated, custom_event_date, custom_event_location, custom_event_description)
 
         apply_fees_logic(updated, updated["status"], fees_amount_raw, fees_reason_raw, clear_fees)
 
@@ -1074,7 +1058,6 @@ def admin_panel():
         save_json(SHIPMENTS_FILE, shipments)
         return redirect(url_for("admin_panel"))
 
-    # Render admin page
     ship_list = []
     for tid, s in shipments.items():
         ship_list.append({
@@ -1105,7 +1088,7 @@ def admin_panel():
 
 
 # -----------------------
-# Other Admin Actions
+# Admin inline update route
 # -----------------------
 @app.route("/admin/update/<tracking_id>", methods=["POST"])
 def admin_update_shipment(tracking_id):
@@ -1153,17 +1136,14 @@ def admin_update_shipment(tracking_id):
 
     apply_fees_logic(shipment, shipment.get("status", ""), fees_amount_raw, fees_reason_raw, clear_fees)
 
-    if should_regenerate_route(shipments.get(tracking_id, {}), shipment):
+    existing_snapshot = shipments.get(tracking_id, {}) or {}
+    if should_regenerate_route(existing_snapshot, shipment):
         shipment["route"] = generate_route(shipment.get("origin"), shipment.get("destination"))
 
-    # Support custom date in inline update
-    custom_event_date = request.form.get("custom_event_date", "").strip()
-    custom_event_description = request.form.get("custom_event_description", "").strip()
-    if custom_event_description:
-        add_event(shipment, custom_event_date, "Shipment Update", custom_event_description)
-
     add_status_event_if_changed(shipment, old_status, shipment.get("status", ""))
-    add_estimated_delivery_event_if_changed(shipment, old_est or "", shipment.get("estimated_delivery") or "")
+
+    new_est = shipment.get("estimated_delivery") or ""
+    add_estimated_delivery_event_if_changed(shipment, old_est or "", new_est)
 
     ensure_auto_history(shipment)
 
@@ -1265,7 +1245,11 @@ def verify_payment(tracking_id):
         old_status = shipment.get("status", "")
         shipment["status"] = "In Transit"
 
-        add_event(shipment, now_str(), "Shipment Update", "Payment Verified - Shipment Released")
+        shipment.setdefault("events", []).append({
+            "date": now_str(),
+            "location": "Shipment Update",
+            "description": "Payment Verified - Shipment Released"
+        })
 
         add_status_event_if_changed(shipment, old_status, shipment["status"])
         ensure_auto_history(shipment)
@@ -1299,6 +1283,28 @@ def prohibited_items():
     return render_template("prohibited_items.html", user=current_user())
 
 
+@app.route("/prohibited_items")
+def prohibited_items_alias():
+    return redirect(url_for("prohibited_items"))
+
+
+# ✅ quote supports GET + POST (email -> success message)
+@app.route("/quote", methods=["GET", "POST"])
+def quote():
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip()
+        if not email:
+            return render_template("quote.html", user=current_user(), error="Email is required."), 400
+
+        return render_template(
+            "quote.html",
+            user=current_user(),
+            success="✅ Total estimate will be sent to your email shortly."
+        )
+
+    return render_template("quote.html", user=current_user())
+
+
 @app.route("/services")
 def services():
     return render_template("services.html", user=current_user())
@@ -1322,22 +1328,6 @@ def support():
 @app.route("/terms")
 def terms():
     return render_template("terms.html", user=current_user())
-
-
-@app.route("/quote", methods=["GET", "POST"])
-def quote():
-    if request.method == "POST":
-        email = (request.form.get("email") or "").strip()
-        if not email:
-            return render_template("quote.html", user=current_user(), error="Email is required."), 400
-
-        return render_template(
-            "quote.html",
-            user=current_user(),
-            success="✅ Total estimate will be sent to your email shortly."
-        )
-
-    return render_template("quote.html", user=current_user())
 
 
 if __name__ == "__main__":
