@@ -13,6 +13,13 @@
     "role": "user",
     "active": true
   },
+  "jerry.receiver@glopacshippingexpress.com": {
+    "email": "jerry.receiver@glopacshippingexpress.com",
+    "name": "Jerry G",
+    "password": "JerryG123",
+    "role": "user",
+    "active": true
+  },
   "mina.owner@glopacshippingexpress.com": {
     "email": "mina.owner@glopacshippingexpress.com",
     "name": "Mina Tanaka",
