@@ -666,5 +666,28 @@
                 "description": "Status updated: N/A \u2192 In Transit"
             }
         ]
+    },
+    {
+    "BOE947281": {
+        "owner_email": "customer@example.com",
+        "status": "Label Created",
+        "estimated_delivery": "2026-01-20",
+        "origin": "Sydney, Australia",
+        "destination": "London, UK",
+        "package_details": "Electronics - 8kg",
+        "route": null,
+        "current_location": null,
+        "events": [
+            {
+                "date": "2025-12-02 14:00",
+                "location": "System",
+                "description": "Label Created"
+            }
+        ],
+        "fees": null,
+        "_auto_event_keys": [
+            "milestone_created"
+        ]
     }
+}
 }
