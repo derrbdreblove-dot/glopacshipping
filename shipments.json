@@ -684,9 +684,7 @@
                 "description": "Label Created"
             }
         ],
-        "fees": null,
-        "_auto_event_keys": [
-            "milestone_created"
+        "fees": null
         ]
     }
 }
