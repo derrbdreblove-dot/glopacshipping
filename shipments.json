@@ -276,8 +276,8 @@
             }
         ],
         "current_location": {
-            "lat": 32.7157,
-            "lng": -117.1611
+            "lat": 63.1792,
+            "lng": -14.6357
         },
         "events": [
             {
@@ -293,7 +293,7 @@
             {
                 "date": "2026-03-06 06:30",
                 "location": "ostersund, SWE Gateway",
-                "description": "Arrived at Border"
+                "description": "Arrived at Transit Hub"
             },
             {
                 "date": "2026-03-07 11:20",
