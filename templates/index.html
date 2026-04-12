@@ -64,9 +64,10 @@
       font-weight: 600;
       font-size: 15px;
       border-bottom: 1px solid #ffe69c;
+      position: relative;
     }
 
-    /* HERO (video background) */
+    /* HERO */
     .hero{
       position:relative;
       overflow:hidden;
@@ -148,10 +149,6 @@
     .card .pad h3{color:#0b1220;}
     .card .pad p{color:var(--muted);}
     .card .pad a{color:var(--brand);font-weight:800;}
-    .card .pad ::selection{
-      background:rgba(0,51,102,.18);
-      color:#0b1220;
-    }
 
     footer{
       background:#0b1220;color:#cbd5e1;
@@ -168,8 +165,8 @@
 </head>
 <body>
 
-  <!-- Service Disruption Notice -->
-  <div class="notice">
+  <!-- Service Disruption Notice - Auto hides after 10 seconds -->
+  <div id="notice" class="notice">
     We had a technical error from March 25th to April 2nd. Our team is working hard to restore all services. 
     Most services are now up and running. Thank you for your patience.
   </div>
@@ -262,7 +259,6 @@
                 </a>
               {% endif %}
             </div>
-
           </div>
         </div>
       </div>
@@ -320,6 +316,18 @@
   </footer>
 
   <script>
+    // Auto-hide notice after 10 seconds
+    setTimeout(function() {
+      var notice = document.getElementById("notice");
+      if (notice) {
+        notice.style.transition = "opacity 0.6s ease";
+        notice.style.opacity = "0";
+        setTimeout(function() {
+          notice.style.display = "none";
+        }, 600);
+      }
+    }, 10000);   // 10000 milliseconds = 10 seconds
+
     document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 
