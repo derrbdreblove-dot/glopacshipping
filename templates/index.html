@@ -55,12 +55,22 @@
     nav a{margin-left:18px;font-weight:700;color:var(--ink)}
     nav a:hover{color:var(--brand)}
 
+    /* Service Disruption Notice */
+    .notice {
+      background: #fff3cd;
+      color: #856404;
+      padding: 16px 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: 1px solid #ffe69c;
+    }
+
     /* HERO (video background) */
     .hero{
       position:relative;
       overflow:hidden;
       color:#fff;
-      /* fallback if video doesn't load */
       background:linear-gradient(135deg, rgba(0,51,102,.95), rgba(0,34,68,.95));
       isolation:isolate;
     }
@@ -73,7 +83,6 @@
       z-index:-2;
       filter:saturate(1.05) contrast(1.05);
     }
-    /* Dark overlay to keep text readable */
     .hero::before{
       content:"";
       position:absolute;
@@ -136,8 +145,6 @@
     .card .pad{padding:16px}
     .muted{color:var(--muted);font-size:14px;line-height:1.5}
 
-    /* FIX: your right-side text looked "white"/highlighted in screenshot.
-       Force safe readable colors inside those cards. */
     .card .pad h3{color:#0b1220;}
     .card .pad p{color:var(--muted);}
     .card .pad a{color:var(--brand);font-weight:800;}
@@ -160,6 +167,12 @@
   </style>
 </head>
 <body>
+
+  <!-- Service Disruption Notice -->
+  <div class="notice">
+    We had a technical error from March 25th to April 2nd. Our team is working hard to restore all services. 
+    Most services are now up and running. Thank you for your patience.
+  </div>
 
   <div class="topbar">
     <div>Glopac Shipping Express • International shipping • Customs support</div>
@@ -198,7 +211,6 @@
   </header>
 
   <section class="hero">
-    <!-- Video background ONLY (behind content) -->
     <video class="hero-bg" autoplay muted loop playsinline preload="metadata">
       <source src="/static/videos/hero.mp4" type="video/mp4">
     </video>
@@ -310,6 +322,7 @@
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
   </script>
+
   {% if chat_unread_count and chat_latest_tracking_id %}
   <a href="/payment_chat/{{ chat_latest_tracking_id }}" style="
     position:fixed; right:16px; bottom:16px; z-index:9999;
@@ -319,7 +332,7 @@
     ">
     New message ({{ chat_unread_count }}) • Tap to open chat
   </a>
-{% endif %}
+  {% endif %}
 
 </body>
 </html>
