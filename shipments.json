@@ -253,7 +253,7 @@
     },
     "BOE713619": {
         "owner_email": "jerry.receiver@glopacshippingexpress.com",
-        "status": "In Transit",
+        "status": "On Hold",
         "estimated_delivery": "2026-03-20",
         "origin": "Amsterdam, NED",
         "destination": "Tijeras, NM, USA",
@@ -293,12 +293,27 @@
             {
                 "date": "2026-03-06 06:30",
                 "location": "ostersund, SWE Gateway",
-                "description": "Arrived at Border Gateway"
+                "description": "Arrived at Border"
             },
             {
                 "date": "2026-03-07 11:20",
                 "location": "ostersund, SWE Gateway",
                 "description": "In Transit to Destination Country"
+            },
+            {
+                "date": "2026-03-08 10:23",
+                "location": "ostersund, SWE Gateway",
+                "description": "Delayed"
+            },
+            {
+                "date": "2026-03-09 11:30",
+                "location": "ostersund, SWE Gateway",
+                "description": "On Hold Custom"
+            },
+            {
+                "date": "2026-03-11 09:30",
+                "location": "ostersund, SWE Gateway",
+                "description": "Awaiting Custom Clearance"
             }
         ],
         "fees": null
