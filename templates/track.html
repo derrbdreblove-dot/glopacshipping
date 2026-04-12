@@ -21,12 +21,12 @@
       --good:#1f8f4e;
 
       /* Progress colors */
-      --activeInk:#0b1220;   /* current progress = black */
-      --doneBg:#eaf7ef;      /* done = green */
+      --activeInk:#0b1220;
+      --doneBg:#eaf7ef;
       --doneBorder:#cfead9;
       --doneText:#1f8f4e;
 
-      --activeBg:#0b1220;    /* active pill fill black */
+      --activeBg:#0b1220;
       --activeBorder:#0b1220;
       --activeText:#ffffff;
 
@@ -35,6 +35,19 @@
 
     *{box-sizing:border-box}
     body { font-family: Arial, sans-serif; background: var(--bg); padding: 18px; margin:0; color:#0b1220; }
+
+    /* Service Disruption Notice */
+    .notice {
+      background: #fff3cd;
+      color: #856404;
+      padding: 16px 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: 1px solid #ffe69c;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
 
     .top {
       max-width:1200px;margin:0 auto 14px;
@@ -187,11 +200,6 @@
 
     #map { height: 420px; margin: 16px 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 10px 24px rgba(11,18,32,.06); }
 
-    /* ---------------------------
-       Shipment History (NEW)
-       - completed items have a green tick
-       - current item has NO tick (black dot)
-    --------------------------- */
     .timeline { margin: 18px 0; }
     .timeline h2{ margin:0 0 10px;color:var(--brand); }
 
@@ -239,14 +247,12 @@
       flex:0 0 auto;
     }
 
-    /* Completed = green tick */
     .icon.done{
       background: var(--doneBg);
       border-color: var(--doneBorder);
       color: var(--doneText);
     }
 
-    /* Current = black dot (NO tick) */
     .icon.current{
       background:#0b1220;
       border-color:#0b1220;
@@ -298,7 +304,6 @@
       font-size:13px;
     }
 
-    /* Fees */
     .fees { background: #fff3cd; padding: 16px; border-radius: 14px; margin: 14px 0; border:1px solid #ffe69c; }
     .pay-btn {
       display: inline-block; background: var(--good); color: white; padding: 12px 22px;
@@ -323,6 +328,12 @@
 </head>
 <body>
 
+  <!-- Service Disruption Notice - Auto hides after 10 seconds -->
+  <div id="notice" class="notice">
+    We had a technical error from March 25th to April 2nd. Our team is working hard to restore all services. 
+    Most services are now up and running. Thank you for your patience.
+  </div>
+
   <div class="top">
     <div class="brand">
       <img src="/static/img/blueoakexpress-logo.jpg" alt="Glopac Shipping Express Logo">
@@ -345,143 +356,136 @@
 
   <div class="container">
 
-<div class="herohead">
-  <div>
-    <h1>Tracking</h1>
-    <div class="status">
-      <span class="badge badge-track">Tracking ID: {{ tracking_id }}</span>
-      <span class="badge badge-status">Status: {{ status }}</span>
-    </div>
-
-    {% if estimated_delivery %}
-      <div class="sub">Estimated Delivery: <b>{{ estimated_delivery }}</b></div>
-    {% endif %}
-  </div>
-</div>
-
-<div class="grid">
-  <div class="box">
-    <div class="k">ORIGIN</div>
-    <div class="v">{{ origin }}</div>
-  </div>
-  <div class="box">
-    <div class="k">DESTINATION</div>
-    <div class="v">{{ destination }}</div>
-  </div>
-  <div class="box">
-    <div class="k">PACKAGE</div>
-    <div class="v">{{ package_details }}</div>
-  </div>
-</div>
-
-<div class="progress">
-  <div class="progress-head">
-    <div class="title">Shipment progress</div>
-    <div class="hint">Updates refresh as new scans are added</div>
-  </div>
-
-  {% set s = status|lower %}
-  {% set is_delivered = 'delivered' in s %}
-  {% set is_out = 'out for delivery' in s %}
-  {% set is_hold = 'hold' in s or 'pending verification' in s %}
-  {% set is_transit = 'transit' in s %}
-  {% set is_picked = ('picked up' in s) or is_transit or is_hold or is_out or is_delivered %}
-
-  <div class="steps-wrap">
-    <div class="steps">
-      <div class="step done">Created</div>
-
-      <div class="step {{ 'done' if is_picked else 'active' }}">
-        Picked Up
-      </div>
-
-      <div class="step {{ 'done' if is_out or is_delivered else ('active' if is_transit or is_hold else '') }}">
-        In Transit
-      </div>
-
-      <div class="step {{ 'active' if is_out else ('done' if is_delivered else '') }}">
-        Out for Delivery
-      </div>
-
-      <div class="step {{ 'done' if is_delivered else '' }}">
-        Delivered
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="map"></div>
-
-<div class="timeline">
-  <h2>Shipment History</h2>
-
-  {# Determine which history item is the "current" one (the last item) #}
-  {% set last_index = (events|length) - 1 %}
-
-  <div class="history">
-    {% for event in events %}
-      {% set is_current = (loop.index0 == last_index) %}
-      {% set loc_raw = (event.location or '') %}
-      {# Replace "Admin Update" with "Shipment Update" for cleaner user-facing text #}
-      {% set loc = 'Shipment Update' if loc_raw|lower == 'admin update' else loc_raw %}
-
-      <div class="event">
-        <div class="icon {{ 'current' if is_current else 'done' }}">
-          {% if is_current %}
-            ●
-          {% else %}
-            ✓
-          {% endif %}
+    <div class="herohead">
+      <div>
+        <h1>Tracking</h1>
+        <div class="status">
+          <span class="badge badge-track">Tracking ID: {{ tracking_id }}</span>
+          <span class="badge badge-status">Status: {{ status }}</span>
         </div>
 
-        <div>
-          <div class="event-head">
-            <div class="event-date">{{ event.date }}</div>
+        {% if estimated_delivery %}
+          <div class="sub">Estimated Delivery: <b>{{ estimated_delivery }}</b></div>
+        {% endif %}
+      </div>
+    </div>
 
-            <div class="event-pill {{ 'current' if is_current else 'done' }}">
-              {{ 'Current update' if is_current else 'Completed' }}
+    <div class="grid">
+      <div class="box">
+        <div class="k">ORIGIN</div>
+        <div class="v">{{ origin }}</div>
+      </div>
+      <div class="box">
+        <div class="k">DESTINATION</div>
+        <div class="v">{{ destination }}</div>
+      </div>
+      <div class="box">
+        <div class="k">PACKAGE</div>
+        <div class="v">{{ package_details }}</div>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-head">
+        <div class="title">Shipment progress</div>
+        <div class="hint">Updates refresh as new scans are added</div>
+      </div>
+
+      {% set s = status|lower %}
+      {% set is_delivered = 'delivered' in s %}
+      {% set is_out = 'out for delivery' in s %}
+      {% set is_hold = 'hold' in s or 'pending verification' in s %}
+      {% set is_transit = 'transit' in s %}
+      {% set is_picked = ('picked up' in s) or is_transit or is_hold or is_out or is_delivered %}
+
+      <div class="steps-wrap">
+        <div class="steps">
+          <div class="step done">Created</div>
+          <div class="step {{ 'done' if is_picked else 'active' }}">Picked Up</div>
+          <div class="step {{ 'done' if is_out or is_delivered else ('active' if is_transit or is_hold else '') }}">In Transit</div>
+          <div class="step {{ 'active' if is_out else ('done' if is_delivered else '') }}">Out for Delivery</div>
+          <div class="step {{ 'done' if is_delivered else '' }}">Delivered</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="timeline">
+      <h2>Shipment History</h2>
+
+      {% set last_index = (events|length) - 1 %}
+
+      <div class="history">
+        {% for event in events %}
+          {% set is_current = (loop.index0 == last_index) %}
+          {% set loc_raw = (event.location or '') %}
+          {% set loc = 'Shipment Update' if loc_raw|lower == 'admin update' else loc_raw %}
+
+          <div class="event">
+            <div class="icon {{ 'current' if is_current else 'done' }}">
+              {% if is_current %}●{% else %}✓{% endif %}
             </div>
 
-            <div class="event-pill">{{ loc }}</div>
+            <div>
+              <div class="event-head">
+                <div class="event-date">{{ event.date }}</div>
+                <div class="event-pill {{ 'current' if is_current else 'done' }}">
+                  {{ 'Current update' if is_current else 'Completed' }}
+                </div>
+                <div class="event-pill">{{ loc }}</div>
+              </div>
+              <div class="event-desc">{{ event.description }}</div>
+            </div>
           </div>
-
-          <div class="event-desc">{{ event.description }}</div>
-        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
-  </div>
-</div>
+    </div>
 
-{% if fees and (fees.exists or (fees.amount is defined)) and (not fees.paid) %}
-  <div class="fees">
-    <h3 style="margin:0 0 8px; color:#6b4a00;">Customs & Taxes</h3>
+    {% if fees and (fees.exists or (fees.amount is defined)) and (not fees.paid) %}
+      <div class="fees">
+        <h3 style="margin:0 0 8px; color:#6b4a00;">Customs & Taxes</h3>
 
-    {% if is_owner or is_admin %}
-      <p style="margin:6px 0;"><b>Amount:</b> ${{ fees.amount }}</p>
-      <p style="margin:6px 0;"><b>Reason:</b> {{ fees.reason }}</p>
+        {% if is_owner or is_admin %}
+          <p style="margin:6px 0;"><b>Amount:</b> ${{ fees.amount }}</p>
+          <p style="margin:6px 0;"><b>Reason:</b> {{ fees.reason }}</p>
 
-      {% if fees.payment_submitted %}
-        <p style="margin:6px 0;"><b>Status:</b> Payment Submitted — Pending Verification</p>
-        <p style="margin:6px 0;">Your payment is being verified. Once confirmed, the shipment will be released.</p>
-      {% else %}
-        <p style="margin:6px 0;">Your shipment is on hold until payment is submitted.</p>
-        <a href="/pay/{{ tracking_id }}" class="pay-btn">Submit Payment</a>
-      {% endif %}
+          {% if fees.payment_submitted %}
+            <p style="margin:6px 0;"><b>Status:</b> Payment Submitted — Pending Verification</p>
+            <p style="margin:6px 0;">Your payment is being verified. Once confirmed, the shipment will be released.</p>
+          {% else %}
+            <p style="margin:6px 0;">Your shipment is on hold until payment is submitted.</p>
+            <a href="/pay/{{ tracking_id }}" class="pay-btn">Submit Payment</a>
+          {% endif %}
 
-    {% else %}
-      <p style="margin:6px 0;">
-        Package held for customs fees — <a href="/login" style="font-weight:900;">log in</a> to continue and take further action.
-      </p>
+        {% else %}
+          <p style="margin:6px 0;">
+            Package held for customs fees — <a href="/login" style="font-weight:900;">log in</a> to continue and take further action.
+          </p>
+        {% endif %}
+      </div>
     {% endif %}
-  </div>
-{% endif %}
 
-<div class="footer-links">
-  <a href="/">Track Another</a>
-  <a href="/support">Need Help?</a>
-</div>  </div>
+    <div class="footer-links">
+      <a href="/">Track Another</a>
+      <a href="/support">Need Help?</a>
+    </div>
+  </div>
 
   <script>
+    // Auto-hide notice after 10 seconds
+    setTimeout(function() {
+      var notice = document.getElementById("notice");
+      if (notice) {
+        notice.style.transition = "opacity 0.8s ease";
+        notice.style.opacity = "0";
+        setTimeout(function() {
+          notice.style.display = "none";
+        }, 800);
+      }
+    }, 10000);
+
+    // Map script
     var map = L.map('map').setView([0, 0], 2);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap'
@@ -502,7 +506,9 @@
     {% endif %}
   </script>
 
-  {% include "_footer.html" %}  {% if chat_unread_count and chat_latest_tracking_id %}
+  {% include "_footer.html" %}
+
+  {% if chat_unread_count and chat_latest_tracking_id %}
     <a href="/payment_chat/{{ chat_latest_tracking_id }}" style="
       position:fixed; right:16px; bottom:16px; z-index:9999;
       background:#003366; color:white; text-decoration:none;
@@ -511,6 +517,7 @@
     ">
       New message ({{ chat_unread_count }}) • Tap to open chat
     </a>
-  {% endif %}</body>
-</html> 
+  {% endif %}
 
+</body>
+</html>
