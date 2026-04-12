@@ -251,6 +251,58 @@
         ],
         "fees": null
     },
+    "BOE713619": {
+        "owner_email": "jerry.receiver@glopacshippingexpress.com",
+        "status": "In Transit",
+        "estimated_delivery": "2026-03-20",
+        "origin": "Amsterdam, NED",
+        "destination": "Tijeras, NM, USA",
+        "package_details": "Precious Metal - 96kg",
+        "route": [
+            {
+                "lat": 52.3676,
+                "lng": 4.9041,
+                "label": "Amsterdam - Origin"
+            },
+            {
+                "lat": 32.7157,
+                "lng": -117.1611,
+                "label": "San Diego Gateway"
+            },
+            {
+                "lat": 35.0862,
+                "lng": -106.3879,
+                "label": "Tijeras - Destination"
+            }
+        ],
+        "current_location": {
+            "lat": 32.7157,
+            "lng": -117.1611
+        },
+        "events": [
+            {
+                "date": "2026-03-02 08:10",
+                "location": "Amsterdam, NED",
+                "description": "Package Received"
+            },
+            {
+                "date": "2026-03-04 20:45",
+                "location": "Amsterdam, NED",
+                "description": "Departed Origin Facility"
+            },
+            {
+                "date": "2026-03-06 06:30",
+                "location": "San Diego Gateway",
+                "description": "Arrived at Border Gateway"
+            },
+            {
+                "date": "2026-03-07 11:20",
+                "location": "San Diego Gateway",
+                "description": "In Transit to Destination Country"
+            }
+        ],
+        "fees": null
+    },
     "BOE900111": {
         "owner_email": "amina.owner@glopacshippingexpress.com",
         "status": "On Hold",
