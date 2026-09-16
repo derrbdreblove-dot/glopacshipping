@@ -97,13 +97,6 @@
     "role": "user",
     "active": true
   },
-  "Christopher.mills@glopacshippingexpress.com": {
-    "email": "Christopher.mills@glopacshippingexpress.com",
-    "name": "Christopher Mills",
-    "password": "chris123",
-    "role": "user",
-    "active": true
-  },
   "tra@gmail.com": {
     "email": "tra@gmail.com",
     "name": "derrbdreb love",
@@ -112,7 +105,7 @@
     "active": true,
     "created_at": "2026-01-29 15:03"
   },
-  "Christopher.mills@glopacshippingexpress.com": {
+  "christopher.mills@glopacshippingexpress.com": {
     "email": "christopher.mills@glopacshippingexpress.com",
     "name": "Christopher Mills",
     "password": "Chrismills123",
