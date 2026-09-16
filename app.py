@@ -205,94 +205,24 @@ def add_status_event_if_changed(shipment: dict, old_status: str, new_status: str
 
 
 # -----------------------
-# ✅ AUTO SHIPMENT HISTORY (milestones)
+# ✅ AUTO SHIPMENT HISTORY - COMPLETELY DISABLED
+# Only manual updates from Travel History form will show
 # -----------------------
-def _event_key_list(shipment: dict):
-    shipment.setdefault("_auto_event_keys", [])
-    if not isinstance(shipment["_auto_event_keys"], list):
-        shipment["_auto_event_keys"] = []
-    return shipment["_auto_event_keys"]
 
+def _event_key_list(shipment: dict):
+    return []  # Disabled
 
 def add_auto_event_once(shipment: dict, key: str, location: str, description: str) -> bool:
-    if not isinstance(shipment, dict) or not key:
-        return False
-
-    keys = _event_key_list(shipment)
-    if key in keys:
-        return False
-
-    shipment.setdefault("events", [])
-    if not isinstance(shipment["events"], list):
-        shipment["events"] = []
-
-    shipment["events"].append({
-        "date": now_str(),
-        "location": location,
-        "description": description
-    })
-    keys.append(key)
-    return True
-
+    return False  # Disabled - no automatic events
 
 def normalize_status_bucket(status: str) -> str:
-    s = (status or "").strip().lower()
-    if "delivered" in s:
-        return "delivered"
-    if "out for delivery" in s:
-        return "out_for_delivery"
-    if "transit" in s:
-        return "in_transit"
-    if "picked up" in s:
-        return "picked_up"
-    if "hold" in s or "pending verification" in s:
-        return "on_hold"
-    if "created" in s:
-        return "created"
-    return "other"
-
+    return "other"  # Disabled
 
 def ensure_auto_history(shipment: dict) -> bool:
-    changed = False
-    if not isinstance(shipment, dict):
-        return False
-
-    status = shipment.get("status", "Unknown")
-    bucket = normalize_status_bucket(status)
-
-    changed |= add_auto_event_once(
-        shipment,
-        "milestone_created",
-        "System",
-        "Shipment record created"
-    )
-
-    if bucket == "picked_up":
-        changed |= add_auto_event_once(shipment, "milestone_picked_up", "Carrier Scan", "Shipment picked up")
-    elif bucket == "in_transit":
-        changed |= add_auto_event_once(shipment, "milestone_in_transit", "Transit Hub", "Shipment is in transit")
-    elif bucket == "out_for_delivery":
-        changed |= add_auto_event_once(shipment, "milestone_out_for_delivery", "Destination Facility", "Out for delivery")
-    elif bucket == "delivered":
-        changed |= add_auto_event_once(shipment, "milestone_delivered", "Delivered", "Shipment delivered successfully")
-    elif bucket == "on_hold":
-        changed |= add_auto_event_once(shipment, "milestone_on_hold", "Customs / Compliance", "Shipment placed on hold")
-
-    return changed
-
+    return False  # Disabled - only manual admin input will appear
 
 def add_estimated_delivery_event_if_changed(shipment: dict, old_est: str, new_est: str) -> bool:
-    old_est = (old_est or "").strip()
-    new_est = (new_est or "").strip()
-
-    if old_est == new_est:
-        return False
-
-    key = f"estimated_delivery:{new_est or 'cleared'}"
-    if new_est:
-        return add_auto_event_once(shipment, key, "Shipment Update", f"Estimated delivery set: {new_est}")
-    else:
-        return add_auto_event_once(shipment, key, "Shipment Update", "Estimated delivery cleared")
+    return False  # Disabled
 
 
 # -----------------------
@@ -673,7 +603,7 @@ def my_shipments_alias():
 
 
 # -----------------------
-# Tracking
+# Tracking - Clean Version (Manual Status + Manual History Only)
 # -----------------------
 @app.route("/track", methods=["GET", "POST"])
 def track():
@@ -691,24 +621,10 @@ def track():
     if not shipment:
         return render_template("index.html", error="Tracking ID not found", user=current_user())
 
-    changed = ensure_auto_history(shipment)
-
-    route = shipment.get("route") or []
-    if not isinstance(route, list):
-        route = []
-
-    if not shipment.get("current_location") and route:
-        last = route[-1]
-        if isinstance(last, dict) and "lat" in last and "lng" in last:
-            shipment["current_location"] = {"lat": last["lat"], "lng": last["lng"]}
-            changed = True
-
-    if changed:
-        shipments[tracking_id] = shipment
-        save_json(SHIPMENTS_FILE, shipments)
-
-    current_location = shipment.get("current_location")
-    events = sort_events(shipment.get("events", []))
+    # Only manual events - no automatic updates
+    events = shipment.get("events", [])
+    if not isinstance(events, list):
+        events = []
 
     u = current_user()
     logged = is_logged_in()
@@ -719,47 +635,40 @@ def track():
     is_owner = logged and owner_email and (viewer_email == owner_email)
 
     fees = shipment.get("fees")
-    display_status = shipment.get("status", "Unknown")
-    can_view_sensitive = admin or is_owner
+    status = shipment.get("status", "No Status Yet")
 
+    # Fees visibility logic
     fees_visible = None
-    if fees and isinstance(fees, dict) and not fees.get("paid", True):
-        if not can_view_sensitive:
-            display_status = "Package held for customs fees — log in to continue and take further action"
-            fees_visible = {"exists": True, "paid": False}
-        else:
-            if fees.get("payment_submitted"):
-                display_status = "Payment Submitted - Pending Verification"
+    if fees and isinstance(fees, dict):
+        if not fees.get("paid", False):
+            if not (admin or is_owner):
+                status = "Package held for customs fees — log in to continue"
+                fees_visible = {"exists": True, "paid": False, "amount": fees.get("amount"), "reason": fees.get("reason")}
             else:
-                display_status = "On Hold for Customs/Taxes Payment"
+                fees_visible = fees
+        else:
             fees_visible = fees
-    else:
-        fees_visible = fees if can_view_sensitive else None
 
     est = shipment.get("estimated_delivery")
-    est_tbd = bool(shipment.get("estimated_delivery_tbd_on_hold", False))
-    if est_tbd:
+    if bool(shipment.get("estimated_delivery_tbd_on_hold", False)):
         est = "Date will be made available when hold clears"
 
     return render_template(
         "track.html",
         user=u,
-        logged_in=logged,
-        is_admin=admin,
-        is_owner=is_owner,
-        owner_email=owner_email,
         tracking_id=tracking_id,
-        status=display_status,
+        status=status,                    # ← This now comes directly from admin
         estimated_delivery=est,
         origin=shipment.get("origin"),
         destination=shipment.get("destination"),
         package_details=shipment.get("package_details"),
-        route=route,
-        current_location=current_location,
-        events=events,
+        route=shipment.get("route", []),
+        current_location=shipment.get("current_location"),
+        events=events,                    # Only manual events
         fees=fees_visible,
+        is_owner=is_owner,
+        is_admin=admin
     )
-
 
 # -----------------------
 # Payment page
@@ -1058,6 +967,7 @@ def admin_panel():
         save_json(SHIPMENTS_FILE, shipments)
         return redirect(url_for("admin_panel"))
 
+          # Prepare shipments for admin template
     ship_list = []
     for tid, s in shipments.items():
         ship_list.append({
@@ -1069,6 +979,7 @@ def admin_panel():
             "destination": s.get("destination"),
             "estimated_delivery": s.get("estimated_delivery"),
             "estimated_delivery_tbd_on_hold": bool(s.get("estimated_delivery_tbd_on_hold", False)),
+            "current_location": s.get("current_location")
         })
 
     app_list = []
@@ -1087,9 +998,6 @@ def admin_panel():
     return render_template("admin.html", user=current_user(), shipments=ship_list, applications=app_list)
 
 
-# -----------------------
-# Admin inline update route
-# -----------------------
 @app.route("/admin/update/<tracking_id>", methods=["POST"])
 def admin_update_shipment(tracking_id):
     gate = require_admin(next_url=url_for("admin_panel"))
@@ -1101,56 +1009,81 @@ def admin_update_shipment(tracking_id):
     if not shipment:
         return redirect(url_for("admin_panel"))
 
-    old_status = shipment.get("status", "")
-    old_est = shipment.get("estimated_delivery")
-
+    # === Get data from ALL forms ===
     status = (request.form.get("status") or "").strip()
     custom_status = (request.form.get("custom_status") or "").strip()
     if status == "Custom Status" and custom_status:
         status = custom_status
+
+    progress_note = (request.form.get("progress_note") or "").strip()
+    update_location = (request.form.get("update_location") or "").strip()
+    current_city = (request.form.get("current_city") or "").strip()
+    update_datetime = (request.form.get("update_datetime") or now_str())
+
+    current_location_raw = (request.form.get("current_location") or "").strip()
 
     fees_amount_raw = request.form.get("fees_amount")
     fees_reason_raw = request.form.get("fees_reason")
     clear_fees = request.form.get("clear_fees") == "1"
 
     estimated_delivery = (request.form.get("estimated_delivery") or "").strip()
-    estimated_delivery_tbd = True if request.form.get("estimated_delivery_tbd_on_hold") == "on" else False
+    estimated_delivery_tbd = request.form.get("estimated_delivery_tbd_on_hold") == "on"
 
-    origin = (request.form.get("origin") or "").strip()
-    destination = (request.form.get("destination") or "").strip()
-
-    if origin:
-        shipment["origin"] = origin
-    if destination:
-        shipment["destination"] = destination
-
+    # === 1. Update Main Status (Form 4) ===
     if status:
         shipment["status"] = status
 
+    # === 2. Estimated Delivery ===
     shipment["estimated_delivery_tbd_on_hold"] = bool(estimated_delivery_tbd)
     if estimated_delivery_tbd:
         shipment["estimated_delivery"] = None
-    else:
-        if estimated_delivery:
-            shipment["estimated_delivery"] = estimated_delivery
+    elif estimated_delivery:
+        shipment["estimated_delivery"] = estimated_delivery
 
-    apply_fees_logic(shipment, shipment.get("status", ""), fees_amount_raw, fees_reason_raw, clear_fees)
+    # === 3. Current Location for Map ===
+    if current_location_raw:
+        try:
+            cl = json.loads(current_location_raw)
+            if isinstance(cl, dict):
+                shipment["current_location"] = cl
+        except Exception:
+            pass
 
-    existing_snapshot = shipments.get(tracking_id, {}) or {}
-    if should_regenerate_route(existing_snapshot, shipment):
-        shipment["route"] = generate_route(shipment.get("origin"), shipment.get("destination"))
+    # === 4. Travel History Update (Form 2) ===
+    if progress_note:
+        event = {
+            "date": update_datetime.split("T")[0] if "T" in update_datetime else update_datetime,
+            "time": update_datetime.split("T")[1] if "T" in update_datetime else "",
+            "location": update_location or "Unknown Location",
+            "current_city": current_city,
+            "description": progress_note
+        }
+        shipment.setdefault("events", []).append(event)
 
-    add_status_event_if_changed(shipment, old_status, shipment.get("status", ""))
+    # === 5. Customs & Fees (Form 3) - FIXED ===
+    if fees_amount_raw:
+        try:
+            amount = float(fees_amount_raw)
+            if amount > 0:
+                shipment["fees"] = {
+                    "amount": amount,
+                    "reason": (fees_reason_raw or "Customs and Taxes").strip(),
+                    "paid": False,
+                    "payment_submitted": False
+                }
+                # Auto-set status to On Hold when fees are added
+                if "hold" not in shipment.get("status", "").lower():
+                    shipment["status"] = "On Hold"
+        except:
+            pass
 
-    new_est = shipment.get("estimated_delivery") or ""
-    add_estimated_delivery_event_if_changed(shipment, old_est or "", new_est)
+    if clear_fees:
+        shipment.pop("fees", None)
 
-    ensure_auto_history(shipment)
-
+    # Save everything
     shipments[tracking_id] = shipment
     save_json(SHIPMENTS_FILE, shipments)
     return redirect(url_for("admin_panel"))
-
 
 @app.route("/admin/approve/<email>", methods=["POST"])
 def admin_approve_application(email):
