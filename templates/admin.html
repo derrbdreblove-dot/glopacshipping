@@ -75,6 +75,7 @@ textarea{resize:vertical}
   font-weight:900;
   cursor:pointer;
   margin-top:10px;
+  margin-right:8px;
 }
 .btn:hover{background:var(--brand2);}
 .btn-good{background:var(--good);}
@@ -227,12 +228,15 @@ textarea{resize:vertical}
       {% endif %}
     </div>
 
-    <!-- Create / Update shipment -->
+  </div>
+
+   <!-- RIGHT: 4 Main Sections -->
+  <div>
+
+    <!-- 1. Create New Shipment (Now Complete) -->
     <div class="card">
-      <h2>Add / Update Shipment</h2>
-      <p class="muted">
-        Create a shipment or update any fields. If status is <b>On Hold</b>, you can add fees.
-      </p>
+      <h2>1. Create New Shipment</h2>
+      <p class="muted">Basic shipment details (fees removed)</p>
 
       <form action="/admin" method="post">
         <input type="hidden" name="form_type" value="shipment">
@@ -243,7 +247,7 @@ textarea{resize:vertical}
         <div class="two">
           <div>
             <label>Status</label>
-            <input type="text" name="status" required placeholder="In Transit, On Hold, Delivered">
+            <input type="text" name="status" required placeholder="e.g. Shipment Created, In Transit">
           </div>
           <div>
             <label>Owner Email</label>
@@ -253,11 +257,11 @@ textarea{resize:vertical}
 
         <div class="two">
           <div>
-            <label>Origin (address/city)</label>
+            <label>Origin</label>
             <input type="text" name="origin" placeholder="e.g. New York, USA">
           </div>
           <div>
-            <label>Destination (address/city)</label>
+            <label>Destination</label>
             <input type="text" name="destination" placeholder="e.g. London, UK">
           </div>
         </div>
@@ -269,177 +273,149 @@ textarea{resize:vertical}
           <div>
             <label>Expected Delivery Date</label>
             <input type="date" name="estimated_delivery">
-            <div class="small">If you check the box below, date will show as “available when hold clears”.</div>
           </div>
           <div>
             <label>
               <input type="checkbox" name="estimated_delivery_tbd_on_hold" style="width:auto;margin-right:8px;">
-              Date will be made available when hold clears
+              Date available when hold clears
             </label>
           </div>
         </div>
 
-        <div class="two">
-          <div>
-            <label>Customs/Taxes Fee Amount (optional)</label>
-            <input type="number" step="0.01" name="fees_amount" placeholder="e.g. 45.50">
-          </div>
-          <div>
-            <label>Fee Reason (optional)</label>
-            <input type="text" name="fees_reason" placeholder="e.g. Customs and Taxes">
-          </div>
-        </div>
-
-        <label>
-          <input type="checkbox" name="fees_paid" style="width:auto;margin-right:8px;">
-          Mark fees as paid (optional)
-        </label>
-
-        <label>Route (JSON array of points) — optional</label>
-        <textarea name="route" rows="5"
-          placeholder='[{"lat":40.7128,"lng":-74.0060,"label":"New York"}, {"lat":51.5074,"lng":-0.1278,"label":"London"}]'></textarea>
-
-        <label>Current Location (JSON - optional)</label>
-        <input type="text" name="current_location" placeholder='{"lat":48.8566,"lng":2.3522}'>
-
-        <button class="btn" type="submit">Save Shipment</button>
+        <button class="btn" type="submit">Create Shipment</button>
       </form>
     </div>
-  </div>
 
-  <!-- RIGHT: Shipments -->
-  <div>
+    <!-- 2. Travel History Update -->
     <div class="card">
-      <h2>Existing Shipments</h2>
-      <p class="muted">Admin can edit status & fees for any shipment (even Delivered).</p>
+      <h2>2. Travel History Update</h2>
+      <p class="muted">Add movement details</p>
 
-      {% if shipments %}
-        <ul class="list">
-          {% for ship in shipments %}
-            <li class="item">
-              <div class="topline">
-                <div>
-                  <div class="tid">{{ ship.tracking_id }} — {{ ship.status }}</div>
-                  <div class="small"><b>Owner:</b> {{ ship.owner_email or "Unassigned" }}</div>
-                  {% if ship.origin or ship.destination %}
-                    <div class="small"><b>From:</b> {{ ship.origin or "-" }} • <b>To:</b> {{ ship.destination or "-" }}</div>
-                  {% endif %}
+      <label>Select Shipment</label>
+      <select id="travel-select" style="margin-bottom:15px;width:100%;">
+        <option value="">-- Choose Shipment --</option>
+        {% for ship in shipments %}
+          <option value="{{ ship.tracking_id }}">{{ ship.owner_email }} — {{ ship.tracking_id }}</option>
+        {% endfor %}
+      </select>
 
-                  {% if ship.estimated_delivery_tbd_on_hold %}
-                    <div class="small"><b>Expected delivery:</b> Date will be made available when hold clears</div>
-                  {% elif ship.estimated_delivery %}
-                    <div class="small"><b>Expected delivery:</b> {{ ship.estimated_delivery }}</div>
-                  {% endif %}
+      <div id="travel-form-area" style="display:none;">
+        <form action="" method="post" id="travel-form">
+          <label>Date & Time</label>
+          <input type="datetime-local" name="update_datetime" required>
 
-                  {% if ship.fees and not ship.fees.paid %}
-                    {% if ship.fees.payment_submitted %}
-                      <div class="pill pill-pending">Payment Submitted</div>
-                    {% else %}
-                      <div class="pill pill-hold">On Hold (Unpaid Fees)</div>
-                    {% endif %}
-                  {% elif ship.fees and ship.fees.paid %}
-                    <div class="pill pill-paid">Fees Paid</div>
-                  {% endif %}
+          <label>Activity</label>
+          <textarea name="progress_note" rows="3" placeholder="Package arrived at facility..."></textarea>
 
-                  <!--  UPDATED: Added Open Chat link -->
-                  <div class="small" style="margin-top:8px; display:flex; gap:14px; flex-wrap:wrap;">
-                    <a href="/track?tracking_id={{ ship.tracking_id }}">View tracking</a>
-                    <a href="/admin/chat/{{ ship.tracking_id }}" style="font-weight:900;">Open chat</a>
-                  </div>
-                </div>
+          <label>Location / Hub</label>
+          <input type="text" name="update_location" placeholder="e.g. Paris Sorting Hub">
 
-                <form action="/delete/{{ ship.tracking_id }}" method="post">
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-              </div>
+          <label>Current City</label>
+          <input type="text" name="current_city" placeholder="e.g. Paris, France">
 
-              <!-- INLINE EDIT FORM -->
-              <form action="/admin/update/{{ ship.tracking_id }}" method="post">
-                <div class="inline-form">
-                  <div>
-                    <label>Status</label>
-                    <select name="status" required>
-                      {% set st = ship.status or "" %}
-                      <option value="{{ st }}">{{ st if st else "Choose…" }}</option>
-
-                      <option value="Label Created">Label Created</option>
-                      <option value="Picked Up">Picked Up</option>
-                      <option value="In Transit">In Transit</option>
-                      <option value="Arrived at Destination Country">Arrived at Destination Country</option>
-
-                      <!--  ADDED (as requested) -->
-                      <option value="Clearance Update">Clearance Update</option>
-                      <option value="Clearance Process Successful">Clearance Process Successful</option>
-                      <option value="Awaiting Dispatch">Awaiting Dispatch</option>
-                      <!--  END ADDED -->
-
-                      <option value="Out for Delivery">Out for Delivery</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Delayed">Delayed</option>
-                      <option value="On Hold">On Hold</option>
-                      <option value="Custom Status">Custom Status</option>
-                    </select>
-                    <div class="small">Choose “Custom Status” then type below.</div>
-                  </div>
-
-                  <div>
-                    <label>Fees Amount</label>
-                    <input type="number" step="0.01" name="fees_amount"
-                           value="{{ ship.fees.amount if ship.fees and ship.fees.amount is not none else '' }}"
-                           placeholder="e.g. 125.00">
-                  </div>
-
-                  <div>
-                    <label>Fees Reason</label>
-                    <input type="text" name="fees_reason"
-                           value="{{ ship.fees.reason if ship.fees and ship.fees.reason else '' }}"
-                           placeholder="e.g. Customs and Taxes">
-                  </div>
-
-                  <div class="full">
-                    <label>Expected Delivery Date</label>
-                    <input type="date" name="estimated_delivery" value="{{ ship.estimated_delivery or '' }}">
-                    <label style="margin-top:10px;">
-                      <input type="checkbox" name="estimated_delivery_tbd_on_hold" style="width:auto;margin-right:8px;"
-                             {% if ship.estimated_delivery_tbd_on_hold %}checked{% endif %}>
-                      Date will be made available when hold clears
-                    </label>
-                  </div>
-
-                  <div class="full">
-                    <label>If “Custom Status”, type here</label>
-                    <input type="text" name="custom_status" placeholder="e.g. Held at Sorting Facility">
-                  </div>
-
-                  <div class="full">
-                    <label>
-                      <input type="checkbox" name="clear_fees" value="1" style="width:auto; margin-right:8px;">
-                      Clear fees (remove fees object)
-                    </label>
-                  </div>
-                </div>
-
-                <div class="inline-actions">
-                  <button class="btn btn-good" type="submit">Save Changes</button>
-                </div>
-              </form>
-
-              {% if ship.fees and ship.fees.payment_submitted and not ship.fees.paid %}
-                <form action="/verify_payment/{{ ship.tracking_id }}" method="post" style="margin-top:8px;">
-                  <button type="submit" class="btn btn-warn">Verify & Release</button>
-                </form>
-              {% endif %}
-
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>No shipments yet.</p>
-      {% endif %}
+          <button class="btn btn-good" type="submit">Add Travel Update</button>
+          <a href="#" id="view-btn-travel" class="btn" target="_blank">View Shipment</a>
+          <a href="#" id="msg-btn-travel" class="btn">Message Customer</a>
+        </form>
+      </div>
     </div>
+
+    <!-- 3. Customs & Fees -->
+    <div class="card">
+      <h2>3. Customs & Fees</h2>
+      <p class="muted">Activate when needed</p>
+
+      <label>Select Shipment</label>
+      <select id="customs-select" style="margin-bottom:15px;width:100%;">
+        <option value="">-- Choose Shipment --</option>
+        {% for ship in shipments %}
+          <option value="{{ ship.tracking_id }}">{{ ship.owner_email }} — {{ ship.tracking_id }}</option>
+        {% endfor %}
+      </select>
+
+      <label><input type="checkbox" id="activate-customs"> Activate Customs / Fee Hold</label>
+
+      <div id="customs-form-area" style="display:none;">
+        <form action="" method="post" id="customs-form">
+          <label>Fee Amount</label>
+          <input type="number" step="0.01" name="fees_amount" placeholder="125.00">
+
+          <label>Fee Reason</label>
+          <input type="text" name="fees_reason" placeholder="Customs and Taxes">
+
+          <label>New Expected Delivery Date</label>
+          <input type="date" name="estimated_delivery">
+
+          <button class="btn btn-warn" type="submit">Apply Customs Hold</button>
+          <a href="#" id="view-btn-customs" class="btn" target="_blank">View Shipment</a>
+          <a href="#" id="msg-btn-customs" class="btn">Message Customer</a>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. Update Shipping Progress -->
+    <div class="card">
+      <h2>4. Update Shipping Progress</h2>
+      <p class="muted">Controls the main status on tracking page</p>
+
+      <label>Select Shipment</label>
+      <select id="progress-select" style="margin-bottom:15px;width:100%;">
+        <option value="">-- Choose Shipment --</option>
+        {% for ship in shipments %}
+          <option value="{{ ship.tracking_id }}">{{ ship.owner_email }} — {{ ship.tracking_id }}</option>
+        {% endfor %}
+      </select>
+
+      <div id="progress-form-area" style="display:none;">
+        <form action="" method="post" id="progress-form">
+          <label>New Status</label>
+          <input type="text" name="status" placeholder="e.g. In Transit, Customs Clearance, Delivered" required>
+
+          <label>Note (optional)</label>
+          <textarea name="progress_note" rows="2"></textarea>
+
+          <button class="btn btn-good" type="submit">Update Progress</button>
+          <a href="#" id="view-btn-progress" class="btn" target="_blank">View Shipment</a>
+        </form>
+      </div>
+    </div>
+
   </div>
-
+      
 </div>  </div>
-</body>
-</html> 
 
+<script>
+  function setupForm(selectId, formId, viewId, msgId = null) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    select.addEventListener('change', function() {
+      const area = document.getElementById(formId);
+      if (this.value) {
+        area.style.display = 'block';
+        const form = document.getElementById(formId).querySelector('form');
+        if (form) form.action = `/admin/update/${this.value}`;
+
+        if (viewId) {
+          const viewLink = document.getElementById(viewId);
+          if (viewLink) viewLink.href = `/track?tracking_id=${this.value}`;
+        }
+        if (msgId) {
+          const msgLink = document.getElementById(msgId);
+          if (msgLink) msgLink.href = `/admin/chat/${this.value}`;
+        }
+      }
+    });
+  }
+
+  setupForm('travel-select', 'travel-form-area', 'view-btn-travel', 'msg-btn-travel');
+  setupForm('customs-select', 'customs-form-area', 'view-btn-customs', 'msg-btn-customs');
+  setupForm('progress-select', 'progress-form-area', 'view-btn-progress');
+
+  document.getElementById('activate-customs').addEventListener('change', function() {
+    document.getElementById('customs-form-area').style.display = this.checked ? 'block' : 'none';
+  });
+</script>
+
+</body>
+</html>
