@@ -661,6 +661,7 @@ def track():
         estimated_delivery=est,
         origin=shipment.get("origin"),
         destination=shipment.get("destination"),
+        receiver_name=shipment.get("receiver_name"),
         package_details=shipment.get("package_details"),
         route=shipment.get("route", []),
         current_location=shipment.get("current_location"),
