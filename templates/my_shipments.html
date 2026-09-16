@@ -339,6 +339,9 @@
               <div class="left">
                 <div class="tid">{{ s.tracking_id }} — {{ s.status }}</div>
                 <div class="small"><b>From:</b> {{ s.origin }} &nbsp;•&nbsp; <b>To:</b> {{ s.destination }}</div>
+                {% if s.receiver_name %}
+                  <div class="small"><b>Recipient:</b> {{ s.receiver_name }}</div>
+                {% endif %}
                 {% if s.estimated_delivery %}
                   <div class="small"><b>Estimated delivery:</b> {{ s.estimated_delivery }}</div>
                 {% endif %}
