@@ -129,6 +129,34 @@
         ],
         "fees": null
     },
+      "GPX240916": {
+    "tracking_id": "GPX240916",
+    "owner_email": "christopher.mills@glopacshippingexpress.com",
+    "sender_name": "Glopac Shipping Express",
+    "receiver_name": "Christopher Mills",
+    "origin": "Accra, Ghana",
+    "destination": "Santa Ana, CA, USA",
+    "receiver_address": "100 Main Street, Santa Ana, CA 92701",
+    "item": "Gold, 6 KG",
+    "weight": "2.4 kg",
+    "service": "Express",
+    "status": "In Transit",
+    "shipped_date": "2026-09-16",
+    "estimated_delivery": "2026-09-18",
+    "events": [
+      {
+        "date": "2026-09-16 09:00",
+        "location": "Accra, Ghana",
+        "description": "Shipment picked up"
+      },
+      {
+        "date": "2026-09-16 14:30",
+        "location": "Accra, Ghana",
+        "description": "Departed origin facility"
+      }
+    ],
+    "fees": null
+ },
     "BOE938271": {
         "owner_email": "kwame.owner@glopacshippingexpress.com",
         "status": "Label Created",
