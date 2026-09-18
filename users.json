@@ -27,6 +27,13 @@
     "role": "user",
     "active": true
   },
+  "dave.sorenson@glopacshippingexpress.com": {
+    "email": "dave.sorenson@glopacshippingexpress.com",
+    "name": "Dave Sorenson",
+    "password": "daves123",
+    "role": "user",
+    "active": true
+  },
   "kwame.owner@glopacshippingexpress.com": {
     "email": "kwame.owner@glopacshippingexpress.com",
     "name": "Kwame Mensah",
