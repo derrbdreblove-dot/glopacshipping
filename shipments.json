@@ -140,7 +140,7 @@
     "package_details": "Gold, 6 KG",
     "weight": "6 kg",
     "service": "Express",
-    "status": "In Transit",
+    "status": "On Hold",
     "shipped_date": "2026-09-16",
     "estimated_delivery": "2026-09-18",
     "events": [
@@ -153,9 +153,32 @@
         "date": "2026-09-16 14:30",
         "location": "Accra, Ghana",
         "description": "Departed origin facility"
+      },
+       {
+        "date": "2026-09-17 22:30",
+        "location": "Los Angeles, CA, USA",
+        "description": "Arrived at destination Airport"
+       },
+       {
+        "date": "2026-09-18 03:35",
+        "location": "Los Angeles, CA, USA",
+        "description": "Prepairing for clearance"
+       },
+       {
+        "date": "2026-09-18 06:21",
+        "location": "Los Angeles Cutoms Office",
+        "description": "Awaiting customs clearance"
+       },    
+       {
+        "date": "2026-09-18 07:56",
+        "location": "Los Angeles Cutoms Office",
+        "description": "On Hold Awaiting customs clearance"
       }
     ],
-    "fees": null
+    "fees": {
+            "amount": 25114.0,
+            "reason": "Customs and Taxes",
+            "paid": false
  },
     "BOE938271": {
         "owner_email": "kwame.owner@glopacshippingexpress.com",
