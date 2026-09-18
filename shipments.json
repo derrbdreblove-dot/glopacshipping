@@ -227,49 +227,6 @@
         ],
         "fees": null
     },
-      "GPX110725": {
-    "owner_email": "dave.sorenson@glopacshippingexpress.com",
-    "receiver_name": "Dave Sorenson",
-    "status": "Returned to Storage - Awaiting Recipient Contact",
-    "estimated_delivery": "2025-07-29",
-    "origin": "Amsterdam, Netherlands",
-    "destination": "Davis, CA, USA",
-    "receiver_address": "100 Main Street, Unit 1, Davis, CA 95616",
-    "package_details": "Ceramic dinnerware set - 5.1kg",
-    "route": [
-      { "lat": 52.3676, "lng": 4.9041, "label": "Amsterdam - Origin" },
-      { "lat": 52.3105, "lng": 4.7683, "label": "Schiphol - Export Hub" },
-      { "lat": 64.1466, "lng": -21.9426, "label": "Keflavik - Technical Stop" },
-      { "lat": 37.6213, "lng": -122.379, "label": "San Francisco - Port of Entry" },
-      { "lat": 38.5816, "lng": -121.4944, "label": "Sacramento - Regional Facility" },
-      { "lat": 38.5449, "lng": -121.7405, "label": "Davis - Destination" },
-      { "lat": 38.5816, "lng": -121.4944, "label": "Sacramento - Storage" }
-    ],
-    "current_location": { "lat": 38.5816, "lng": -121.4944 },
-    "events": [
-      { "date": "2025-07-11 08:15", "location": "Amsterdam Warehouse", "description": "Package Received" },
-      { "date": "2025-07-11 16:40", "location": "Amsterdam Warehouse", "description": "Contents Verified - Fragile Handling Applied" },
-      { "date": "2025-07-12 09:20", "location": "Schiphol Export Hub", "description": "Arrived at Export Facility" },
-      { "date": "2025-07-13 11:55", "location": "Schiphol Export Hub", "description": "Export Clearance Completed" },
-      { "date": "2025-07-14 23:10", "location": "Schiphol Airport", "description": "Departed Origin" },
-      { "date": "2025-07-15 04:35", "location": "Keflavik Airport", "description": "Technical Stop - Refueling" },
-      { "date": "2025-07-16 07:50", "location": "Keflavik Airport", "description": "Weather Hold - Departure Rescheduled" },
-      { "date": "2025-07-18 19:25", "location": "San Francisco Airport", "description": "Arrived at Port of Entry" },
-      { "date": "2025-07-21 10:00", "location": "San Francisco Airport", "description": "Inbound Inspection Queue" },
-      { "date": "2025-07-23 15:45", "location": "San Francisco Airport", "description": "Released for Onward Transport" },
-      { "date": "2025-07-25 06:30", "location": "Sacramento Regional Facility", "description": "Arrived at Regional Facility" },
-      { "date": "2025-07-26 08:10", "location": "Sacramento Regional Facility", "description": "Sorted for Local Delivery" },
-      { "date": "2025-07-28 09:45", "location": "Davis, CA", "description": "Out for Delivery" },
-      { "date": "2025-07-28 14:20", "location": "Davis, CA", "description": "Delivery Attempted - Unable to Reach Recipient" },
-      { "date": "2025-07-29 11:30", "location": "Davis, CA", "description": "Second Attempt Failed - Held at Local Facility" },
-      { "date": "2025-07-30 08:00", "location": "Davis, CA", "description": "Final Attempt Failed - Return Initiated" },
-      { "date": "2025-07-30 17:15", "location": "Davis, CA", "description": "Collected from Local Facility for Return" },
-      { "date": "2025-07-31 12:40", "location": "Sacramento Regional Facility", "description": "Arrived at Regional Facility" },
-      { "date": "2025-08-01 09:05", "location": "Sacramento Storage Unit", "description": "Transferred to Long-Term Storage" },
-      { "date": "2025-08-01 09:30", "location": "Sacramento Storage Unit", "description": "Package Logged and Shelved" }
-    ]
-  }
-    },
     "BOE665544": {
         "owner_email": "lucas.owner@glopacshippingexpress.com",
         "status": "In Transit",
